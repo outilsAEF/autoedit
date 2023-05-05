@@ -1,7 +1,7 @@
 {
-  "name": "asin-info",
-  "version": "0.0.1",
-  "description": "",
+  "name": "autoedit",
+  "version": "0.2",
+  "description": "AutoEdit - Outil d'aide à l'auto-édition",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
