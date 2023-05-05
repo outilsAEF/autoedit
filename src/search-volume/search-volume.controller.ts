@@ -6,6 +6,7 @@ export class SearchVolumeController {
   constructor(private readonly searchVolumeService: SearchVolumeService) {}
   @Get(':keyword')
   async findByKeyword(@Param('keyword') keyword: string) {
-    const volume = await this.searchVolumeService.findByKeyword(keyword);
+    // const volume =
+    await this.searchVolumeService.findByKeyword(keyword);
   }
 }
