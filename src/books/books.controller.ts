@@ -21,16 +21,19 @@ export class BooksController {
       <h4>Image</h4>
       <img src='${book.coverUrl}'>
 
+      <h4>Classement global:  ${book.globalRank}</h4>
+
       <h4>Catégories</h4>
       <ul>
-        <li>Boutique Kindle (classement global): ${book.globalRank}</li>
         ${book.categories
           .map((category) => {
             return `<li><a href='${category.url}'>${category.categoryTree}</a>${
               category.rank ? '&nbsp; (Classement: ' + category.rank + ')' : ''
             }</li>`;
           })
-          .join('')}</ul>
+          .join('')}
+      </ul>
+
     `;
   }
 }

@@ -1,7 +1,8 @@
 export type Author = string;
 
 export type Category = {
-  title: string;
+  name?: string;
+  title?: string;
   categoryTree: string;
   rank?: number;
   url: string;
