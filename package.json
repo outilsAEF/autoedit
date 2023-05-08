@@ -26,8 +26,10 @@
     "@nestjs/platform-express": "^9.0.0",
     "amazon-paapi": "^1.0.7",
     "axios": "^1.4.0",
+    "axios-cache-interceptor": "^1.0.1",
     "dotenv": "^16.0.3",
     "gologin": "^2.0.10",
+    "hbs": "^4.2.0",
     "playwright": "^1.33.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
