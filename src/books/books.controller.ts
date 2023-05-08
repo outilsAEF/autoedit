@@ -8,7 +8,6 @@ export class BooksController {
   @Render('books')
   async findByAsin(@Param('asin') asin: string) {
     const book = await this.booksService.findByAsin(asin);
-
     return { book };
   }
 }
