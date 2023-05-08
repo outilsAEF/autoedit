@@ -3,22 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import amazonPaapi from 'amazon-paapi';
 import { Author, Book, Category } from './entities/book.entity';
 import axios from 'axios';
+import { setupCache } from 'axios-cache-interceptor';
+setupCache(axios, { ttl: 1000 * 60 * 60 * 4 }); // 4 hours
 
-const CATEGORY_NAME_TO_NOT_DISPLAY = ['Catégories'];
-
-const getFullCategory = (node): string => {
-  let categoryTree = '';
-  if (!node.Ancestor) {
-    categoryTree = node.DisplayName;
-  } else if (!CATEGORY_NAME_TO_NOT_DISPLAY.includes(node.DisplayName)) {
-    categoryTree = getFullCategory(node.Ancestor)
-      .concat(' > ')
-      .concat(node.DisplayName);
-  } else {
-    categoryTree = getFullCategory(node.Ancestor);
-  }
-  return categoryTree;
-};
+const CATEGORY_NODE_NAME_TO_NOT_DISPLAY = ['Catégories'];
+const CATEGORY_TREE_TO_NOT_SHOW_CONTAINS = 'Self Service';
 
 @Injectable()
 export class BooksService {
@@ -57,7 +46,7 @@ export class BooksService {
     );
     const bookFromPAAPI = books.ItemsResult.Items[0];
 
-    const categories: Category[] =
+    const categoriesNotFiltered: Category[] =
       bookFromPAAPI.BrowseNodeInfo.BrowseNodes.sort((a, b) => {
         return +b.SalesRank || 0 - +a.SalesRank || 0;
       }).map((node): Category => {
@@ -68,6 +57,8 @@ export class BooksService {
           categoryTree: getFullCategory(node),
         };
       });
+
+    const categories = filterCategories(categoriesNotFiltered);
 
     console.log('Getting extra info from Rain Forest API');
     const bookFromRainforestAPI = await this.getBookFromRainforestAPI(asin);
@@ -211,3 +202,24 @@ export class BooksService {
     return bookFromRainforestAPI;
   }
 }
+
+const getFullCategory = (node): string => {
+  let categoryTree = '';
+  if (!node.Ancestor) {
+    categoryTree = node.DisplayName;
+  } else if (!CATEGORY_NODE_NAME_TO_NOT_DISPLAY.includes(node.DisplayName)) {
+    categoryTree = getFullCategory(node.Ancestor)
+      .concat(' > ')
+      .concat(node.DisplayName);
+  } else {
+    categoryTree = getFullCategory(node.Ancestor);
+  }
+  return categoryTree;
+};
+
+const filterCategories = (categories: Category[]): Category[] => {
+  return categories.filter(
+    (category) =>
+      !category.categoryTree.includes(CATEGORY_TREE_TO_NOT_SHOW_CONTAINS)
+  );
+};
