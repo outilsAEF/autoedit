@@ -1,37 +1,34 @@
-<html>
-  <head>
-    <meta charset='utf-8' />
-    <title>Auto Edit - Informations sur l'ASIN {{book.asin}}</title>
-  </head>
-  <body>
+<div style="margin-top:50px;margin-bottom:50px">
+  <h1>Informations pour l'ASIN {{book.asin}}</h1>
+</div>
+{{> search_asin}}
+<div>
+  <h4>Titre</h4>
+  <a href='{{book.url}}'>{{book.title}}</a>
 
-    <h4>Titre</h4>
-    <a href='{{book.url}}'>{{book.title}}</a>
+  <h4>ASIN</h4>
+  {{book.asin}}
 
-    <h4>ASIN</h4>
-    {{book.asin}}
+  <h4>Auteur(s)</h4>
+  {{!-- {{book.authors.join('&nbsp;;&nbsp;')}} --}}
+  {{book.authors}}
 
-    <h4>Auteur(s)</h4>
-    {{!-- {{book.authors.join('&nbsp;;&nbsp;')}} --}}
-    {{book.authors}}
+  <h4>Image</h4>
+  <img src='{{book.coverUrl}}' />
 
-    <h4>Image</h4>
-    <img src='{{book.coverUrl}}' />
+  <h4>Classement global: {{book.globalRank}}</h4>
 
-    <h4>Classement global: {{book.globalRank}}</h4>
+  <h4>Catégories</h4>
+  <ul>
+    {{#each book.categories}}
+      <li>
+        <a href='{{url}}'>{{categoryTree}}</a>
+        {{#if rank}}
+          (Classement:
+          {{rank}})
+        {{/if}}
+      </li>
+    {{/each}}
 
-    <h4>Catégories</h4>
-    <ul>
-      {{#each book.categories}}
-        <li>
-          <a href='{{url}}'>{{categoryTree}}</a>
-          {{#if rank}}
-            (Classement:
-            {{rank}})
-          {{/if}}
-        </li>
-      {{/each}}
-
-    </ul>
-  </body>
-</html>
+  </ul>
+</div>
