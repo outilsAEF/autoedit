@@ -4,6 +4,7 @@ import amazonPaapi from 'amazon-paapi';
 import { Author, Book, Category } from './entities/book.entity';
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
+import { InvalidASINException } from './books.exceptions';
 setupCache(axios, { ttl: 1000 * 60 * 60 * 4 }); // 4 hours
 
 const CATEGORY_NODE_NAME_TO_NOT_DISPLAY = ['Catégories'];
@@ -40,10 +41,18 @@ export class BooksService {
       ],
     };
 
-    const books = await amazonPaapi.GetItems(
-      commonParameters,
-      requestParameters
-    );
+    let books;
+    try {
+      books = await amazonPaapi.GetItems(commonParameters, requestParameters);
+    } catch (error) {
+      console.error(
+        'Error while getting results from Amazon:',
+        error.response.body.Errors
+      );
+      if (error.response.body.Errors[0].Code === 'InvalidParameterValue')
+        throw new InvalidASINException(error.response.body.Errors[0].Message);
+    }
+
     const bookFromPAAPI = books.ItemsResult.Items[0];
 
     const categoriesNotFiltered: Category[] =
