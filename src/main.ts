@@ -4,9 +4,15 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { engine } from 'express-handlebars';
 import { ValidationPipe } from '@nestjs/common';
+import { secure } from './common/middleware/secure.middleware';
+// import secure from 'ssl-express-www';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  if (process.env.TEST_SECURE === 'true') {
+    console.info('Using secure');
+    app.use(secure);
+  }
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

@@ -36,7 +36,8 @@
     "hbs": "^4.2.0",
     "playwright": "^1.33.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "ssl-express-www": "^3.2.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
