@@ -1,34 +1,49 @@
-<div style="margin-top:50px;margin-bottom:50px">
-  <h1>Informations pour l'ASIN {{book.asin}}</h1>
-</div>
-{{> search_asin}}
-<div>
-  <h4>Titre</h4>
-  <a href='{{book.url}}'>{{book.title}}</a>
+<div class="container-fluid">
+  {{> logo}}
+  {{> search_asin}}
+  <div class="d-flex">
+    <div class="p-3">      
+      <a href='{{book.url}}'>
+          <img class="img-fluid img-thumbnail rounded" src='{{book.coverUrl}}' />
+      </a>
+    </div>
+    <div class="flex-grow-1 p-3 fs-5">
+      <p>
+        <span class="fw-bold me-1">Titre</span>
+        <a href='{{book.url}}'>{{book.title}}</a>
+      </p>
 
-  <h4>ASIN</h4>
-  {{book.asin}}
+      <p>
+        <span class="fw-bold me-1">ASIN</span>
+         {{book.asin}}
+      </p>
 
-  <h4>Auteur(s)</h4>
-  {{!-- {{book.authors.join('&nbsp;;&nbsp;')}} --}}
-  {{book.authors}}
+      <p>
+        <span class="fw-bold me-1">Auteur(s)</span>
+         {{book.authors}}
+      </p>
 
-  <h4>Image</h4>
-  <img src='{{book.coverUrl}}' />
+      <p>
+        <span class="fw-bold me-1">Classement global</span>
+        <span class="badge bg-primary rounded-pill ms-3">{{book.globalRank}}</span>
+      </p>
+      <div>
+        <p class="fw-bold me-1">Catégories</p>
+          <ul class="list-group">
+            {{#each book.categories}}
+              <li class="list-group-item">
+                <a href='{{url}}'>{{categoryTree}}</a>
+                {{#if rank}}
+                    <span class="badge bg-primary rounded-pill ms-3">{{rank}}</span>
+                {{/if}}
+              </li>
+            {{/each}}
 
-  <h4>Classement global: {{book.globalRank}}</h4>
+          </ul>
 
-  <h4>Catégories</h4>
-  <ul>
-    {{#each book.categories}}
-      <li>
-        <a href='{{url}}'>{{categoryTree}}</a>
-        {{#if rank}}
-          (Classement:
-          {{rank}})
-        {{/if}}
-      </li>
-    {{/each}}
-
-  </ul>
+          </p>
+      </div>
+    </div>
+  </div>
+  
 </div>

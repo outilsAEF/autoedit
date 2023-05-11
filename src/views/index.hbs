@@ -1,12 +1,8 @@
-<div style="margin-top:50px;margin-bottom:50px">
-  <h1>Bienvenue sur Auto Edit</h1>  
-</div>
-{{> search_asin}}
-{{#if error}}
-  {{#if error.isInvalidASINError }} 
-    <div style="color:red">      
-      L'ASIN {{error.asin}} n'existe pas. Veuillez vérifier l'ASIN que vous avez entré.
-    </div>
-  {{/if}}
-{{/if}}
+<div class="container-fluid">
+  
+  
+  {{> logo}}
+  {{> search_asin}}
+  
+  </div>
 </div>

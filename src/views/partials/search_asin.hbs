@@ -1,14 +1,33 @@
-<div style='margin-top:10px;margin-bottom:10px'>
-  <form method='get' action='/book'>
-    <label for='asin'>ASIN</label>
-    <input
-      type='text'
-      id='asin'
-      name='asin'
-      required
-      placeholder='Recherchez un livre grâce à son ASIN'
-      size='50'
-    />
-    <button type='submit'>Chercher</button>
-  </form>
+<div class="container">
+  <div class="d-flex justify-content-center pb-5">
+    <form class='w-75' role='search' method='get' action='/book'>
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">
+                    
+          <i style="font-size:1.4rem ;color:lightcoral"  class="bi bi-search"></i>
+        </span>
+        <input
+          id='asin'
+          name='asin'
+          type='search'
+          class='form-control'
+          placeholder='Recherchez un livre grâce à son ASIN ...'
+          aria-label='Recherchez un livre grâce à son ASIN ...'
+          aria-describedby="basic-addon1"
+        />
+      </div>
+    </form>
+  </div>
+  
+  {{#if error}}
+    {{#if error.isInvalidASINError }} 
+      <div class="alert alert-danger d-flex justify-content-center p-1 fs-6">    
+        L'ASIN {{error.asin}} n'existe pas. Veuillez vérifier l'ASIN que vous avez entré.
+      </div>
+    {{/if}}
+  {{/if}}
+  
+ 
+  
+  
 </div>
