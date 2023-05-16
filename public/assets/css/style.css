@@ -1,0 +1,46 @@
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+
+.width-90{
+  max-width: 90%;
+  margin:0 auto;
+}
+
+
+header{
+  
+  color: yellow;
+}
+
+
+
+
+
+.header-outer {
+  border-bottom:1px solid #fff000 ;
+  background-color: black;
+}
+
+header {
+  font-size:23.8px;  
+}
+header .nav-link {
+  color: #fff000;
+}
+
+footer {
+  font-size: 0.75rem;
+  background-color: black;
+  color: white;
+}
+
+footer a {
+  
+  text-decoration: none;
+}
+
+header .nav-link:hover, footer .nav-link:hover {
+  color: white;
+}
