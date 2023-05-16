@@ -178,7 +178,7 @@ export class BooksService {
       asin,
       type: 'product',
       include_fields:
-        'product.asin,product.title,product.link,product.authors,product.categories,product.main_image,product.bestsellers_rank,product.variants,product.rating,product,ratings_total,product.a_plus_content,product.publication_date',
+        'product.asin,product.title,product.link,product.authors,product.categories,product.main_image,product.bestsellers_rank,product.variants,product.rating,product.ratings_total,product.a_plus_content,product.publication_date',
     };
 
     // globalRank: (bookFromRainforestAPI.bestsellers_rank && bookFromRainforestAPI.bestsellers_rank[0]?.rank) || undefined,
