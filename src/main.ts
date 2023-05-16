@@ -9,16 +9,15 @@ import { secure } from './common/middleware/secure.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  if (process.env.TEST_SECURE === 'true') {
-    console.info('Using secure');
-    app.use(secure);
-  }
+
+  app.use(secure);
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
     })
   );
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.useStaticAssets(join(__dirname, '../..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.engine(
     'hbs',

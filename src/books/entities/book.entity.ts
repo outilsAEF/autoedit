@@ -1,4 +1,19 @@
-export type Author = string;
+export type Author = {
+  name: string,
+  url: string
+};
+
+export type Rating = {
+  value: number,
+  number: number
+}
+
+export type Variant = {
+  asin: string;
+  url: string;
+  type: string;
+
+}
 
 export type Category = {
   name?: string;
@@ -15,5 +30,10 @@ export class Book {
   authors: Author[];
   coverUrl: string;
   categories: Category[];
-  globalRank: number;
+  globalRank?: number;
+  hasAPlusContent: boolean;
+  rating: Rating;
+  variants: Variant[];
+  publicationDate: string;
+
 }

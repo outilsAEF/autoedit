@@ -12,7 +12,7 @@ const CATEGORY_TREE_TO_NOT_SHOW_CONTAINS = 'Self Service';
 
 @Injectable()
 export class BooksService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) { }
   async findByAsin(asin: string): Promise<Book> {
     console.log('BookService with asin', asin);
 
@@ -75,7 +75,7 @@ export class BooksService {
     const book: Book = {
       asin,
       authors: bookFromRainforestAPI.authors.map(
-        (author): Author => author.name
+        ({ name, link }): Author => ({ name, url: link })
       ),
       // coverUrl: bookFromPAAPI.Images.Primary.Medium.URL,
       coverUrl: bookFromRainforestAPI.main_image.link,
@@ -84,7 +84,16 @@ export class BooksService {
       // url: bookFromPAAPI.DetailPageURL,
       url: bookFromRainforestAPI.link,
       categories,
-      globalRank: +bookFromRainforestAPI.bestsellers_rank[0].rank,
+      globalRank: (bookFromRainforestAPI.bestsellers_rank && bookFromRainforestAPI.bestsellers_rank[0]?.rank) || undefined,
+      hasAPlusContent: bookFromRainforestAPI.a_plus_content?.has_a_plus_content,
+      rating: {
+        value: bookFromRainforestAPI.rating,
+        number: bookFromRainforestAPI.ratings_total
+      },
+      variants: bookFromRainforestAPI.variants?.map(
+        ({ asin, title, link }) => ({ asin, type: title, url: link })),
+      publicationDate: bookFromRainforestAPI.publication_date
+
     };
 
     return book;
@@ -169,8 +178,19 @@ export class BooksService {
       asin,
       type: 'product',
       include_fields:
-        'product.title,product.link,product.authors,product.categories,product.main_image,product.bestsellers_rank',
+        'product.asin,product.title,product.link,product.authors,product.categories,product.main_image,product.bestsellers_rank,product.variants,product.rating,product,ratings_total,product.a_plus_content,product.publication_date',
     };
+
+    // globalRank: (bookFromRainforestAPI.bestsellers_rank && bookFromRainforestAPI.bestsellers_rank[0]?.rank) || undefined,
+    //   hasAPlusContent: bookFromRainforestAPI.a_plus_content?.has_a_plus_content,
+    //     rating: {
+    //   value: bookFromRainforestAPI.rating,
+    //     number: bookFromRainforestAPI.ratings_total
+    // },
+    // variants: bookFromRainforestAPI.variants?.map(
+    //   ({ asin, title, link }) => ({ asin, type: title, url: link })),
+    //   publicationDate: bookFromRainforestAPI.publication_date
+
 
     let response;
     try {
@@ -204,9 +224,13 @@ export class BooksService {
     const data = response.data;
     const bookFromRainforestAPI = data.product;
     // console.log('response from axios', bookRainForestAPI);
+    console.log(`Reading from Rainforest API - ASIN: ${bookFromRainforestAPI.asin}`);
+    console.log(`Reading from Rainforest API - Title: ${bookFromRainforestAPI.title}`);
+    console.log(`Reading from Rainforest API - Bestseller rank? ${bookFromRainforestAPI.bestsellers_rank ? 'true' : 'false'}`);
+
     console.log(
       'kindle ranking',
-      bookFromRainforestAPI.bestsellers_rank[0].rank
+      (bookFromRainforestAPI.bestsellers_rank && bookFromRainforestAPI.bestsellers_rank[0].rank) || 'n/a'
     );
     return bookFromRainforestAPI;
   }

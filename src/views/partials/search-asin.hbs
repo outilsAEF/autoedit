@@ -1,0 +1,38 @@
+
+<div class="container">
+  <div class="d-flex justify-content-center pb-5">
+    <form class='search-asin-form w-75' role='search' method='get' action='/book'>
+      <div class="input-group gap-2">        
+        <input
+          id='asin'
+          name='asin'
+          type='search'
+          class='form-control'
+          placeholder='Saisir un ASIN ...'
+          aria-label='Saisir un ASIN'
+          aria-describedby="basic-addon1"
+          required 
+        />
+        <button class="search-asin-btn btn btn-primary" type="submit">
+          <span class="search-asin-btn-text">Chercher</span>
+          <span class="search-asin-btn-text-loading d-none">En cours 
+            <span class="spinner-border spinner-border-sm" role="status"></span>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  {{#if error}}
+    {{#if error.isInvalidASINError }} 
+      <div class="alert alert-danger d-flex justify-content-center p-1 fs-6">    
+        L'ASIN {{error.asin}} n'existe pas. Veuillez vérifier l'ASIN que vous avez entré.
+      </div>
+    {{/if}}
+  {{/if}}
+  
+ 
+  
+  
+</div>
+<script defer src="assets/js/search-asin.js"></script>
