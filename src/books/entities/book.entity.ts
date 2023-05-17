@@ -12,6 +12,7 @@ export type Variant = {
   asin: string;
   url: string;
   type: string;
+  isCurrent: boolean
 
 }
 

@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import amazonPaapi from 'amazon-paapi';
-import { Author, Book, Category } from './entities/book.entity';
+import { Author, Book, Category, Variant } from './entities/book.entity';
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
 import { InvalidASINException } from './books.exceptions';
@@ -69,8 +69,13 @@ export class BooksService {
 
     const categories = filterCategories(categoriesNotFiltered);
 
-    console.log('Getting extra info from Rain Forest API');
+    console.log(`ASIN[${asin}] - Fetching from Rain Forest API`);
+    console.time(`ASIN[${asin}] - Fetching from Rain Forest API`);
     const bookFromRainforestAPI = await this.getBookFromRainforestAPI(asin);
+    console.timeEnd(`ASIN[${asin}] - Fetching from Rain Forest API`);
+    console.log(`ASIN[${asin}] - Fetching from Rain Forest API :`, bookFromRainforestAPI);
+
+
 
     const book: Book = {
       asin,
@@ -91,7 +96,7 @@ export class BooksService {
         number: bookFromRainforestAPI.ratings_total
       },
       variants: bookFromRainforestAPI.variants?.map(
-        ({ asin, title, link }) => ({ asin, type: title, url: link })),
+        ({ asin, title, link, is_current_product }): Variant => ({ asin, type: title, url: link, isCurrent: is_current_product })),
       publicationDate: bookFromRainforestAPI.publication_date
 
     };
@@ -171,26 +176,14 @@ export class BooksService {
   }
 
   private async getBookFromRainforestAPI(asin: string) {
-    console.log(`getBookFromRainforestAPI with asin ${asin}`);
     const axiosParams = {
       api_key: this.configService.get<string>('RAINFOREST_APIKEY'),
       amazon_domain: 'amazon.fr',
       asin,
       type: 'product',
       include_fields:
-        'product.asin,product.title,product.link,product.authors,product.categories,product.main_image,product.bestsellers_rank,product.variants,product.rating,product.ratings_total,product.a_plus_content,product.publication_date',
+        'product.asin,product.title,product.link,product.authors,product.main_image,product.bestsellers_rank,product.variants,product.rating,product.ratings_total,product.a_plus_content,product.publication_date',
     };
-
-    // globalRank: (bookFromRainforestAPI.bestsellers_rank && bookFromRainforestAPI.bestsellers_rank[0]?.rank) || undefined,
-    //   hasAPlusContent: bookFromRainforestAPI.a_plus_content?.has_a_plus_content,
-    //     rating: {
-    //   value: bookFromRainforestAPI.rating,
-    //     number: bookFromRainforestAPI.ratings_total
-    // },
-    // variants: bookFromRainforestAPI.variants?.map(
-    //   ({ asin, title, link }) => ({ asin, type: title, url: link })),
-    //   publicationDate: bookFromRainforestAPI.publication_date
-
 
     let response;
     try {
@@ -224,14 +217,14 @@ export class BooksService {
     const data = response.data;
     const bookFromRainforestAPI = data.product;
     // console.log('response from axios', bookRainForestAPI);
-    console.log(`Reading from Rainforest API - ASIN: ${bookFromRainforestAPI.asin}`);
-    console.log(`Reading from Rainforest API - Title: ${bookFromRainforestAPI.title}`);
-    console.log(`Reading from Rainforest API - Bestseller rank? ${bookFromRainforestAPI.bestsellers_rank ? 'true' : 'false'}`);
+    // console.log(`Reading from Rainforest API - ASIN: ${bookFromRainforestAPI.asin}`);
+    // console.log(`Reading from Rainforest API - Title: ${bookFromRainforestAPI.title}`);
+    // console.log(`Reading from Rainforest API - Bestseller rank? ${bookFromRainforestAPI.bestsellers_rank ? 'true' : 'false'}`);
 
-    console.log(
-      'kindle ranking',
-      (bookFromRainforestAPI.bestsellers_rank && bookFromRainforestAPI.bestsellers_rank[0].rank) || 'n/a'
-    );
+    // console.log(
+    //   'kindle ranking',
+    //   (bookFromRainforestAPI.bestsellers_rank && bookFromRainforestAPI.bestsellers_rank[0].rank) || 'n/a'
+    // );
     return bookFromRainforestAPI;
   }
 }

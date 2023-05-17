@@ -54,7 +54,11 @@
       <p>
         <span class="me-1">Format(s): </span>
         {{#each book.variants}}
-          <a href="{{url}}" target="_blank">{{type}}</a>,
+          {{#if isCurrent}}
+            <a href="{{url}}" target="_blank">{{type}}</a>,
+          {{else}}
+            <a href="{{url}}" target="_blank">{{type}}</a> (<a href="/book?asin={{asin}}" target="_blank">{{asin}}</a>), 
+          {{/if}}
         {{/each}}
       </p>
       <div>
