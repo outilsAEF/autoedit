@@ -6,26 +6,27 @@ body {
 .width-90{
   max-width: 90%;
   margin:0 auto;
+  width:1200px;
 }
 
-
-header{
-  
+header{  
   color: yellow;
 }
-
-
-
-
 
 .header-outer {
   border-bottom:1px solid #fff000 ;
   background-color: black;
 }
 
+.footer-outer {
+  border-top:1px solid #fff000 ;
+  background-color: black;
+}
+
 header {
   font-size:23.8px;  
 }
+
 header .nav-link {
   color: #fff000;
 }
