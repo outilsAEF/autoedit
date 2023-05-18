@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -8,6 +8,7 @@ import { SearchVolumeService } from './search-volume/search-volume.service';
 import { SearchVolumeModule } from './search-volume/search-volume.module';
 import { AdminBooksModule } from './admin-books/admin-books.module';
 import { CategoriesService } from './categories/categories.service';
+import { TimeLoggerMiddleware } from './common/middleware/time-logger.middleware';
 
 @Module({
   imports: [
@@ -19,4 +20,8 @@ import { CategoriesService } from './categories/categories.service';
   controllers: [AppController, SearchVolumeController],
   providers: [AppService, SearchVolumeService, CategoriesService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TimeLoggerMiddleware).forRoutes('*')
+  }
+}

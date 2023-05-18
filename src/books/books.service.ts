@@ -70,11 +70,11 @@ export class BooksService {
 
     const categories = filterCategories(categoriesNotFiltered);
 
-    console.log(`ASIN[${asin}] - Fetching from Rain Forest API`);
-    console.time(`ASIN[${asin}] - Fetching from Rain Forest API`);
+    console.log(`[asin=${asin}] - Fetching from Rain Forest API`);
+    console.time(`[asin=${asin}] - Fetching from Rain Forest API`);
     const bookFromRainforestAPI = await this.getBookFromRainforestAPI(asin);
-    console.timeEnd(`ASIN[${asin}] - Fetching from Rain Forest API`);
-    console.log(`ASIN[${asin}] - Fetching from Rain Forest API :`, bookFromRainforestAPI);
+    console.timeEnd(`[asin=${asin}] - Fetching from Rain Forest API`);
+    console.log(`[asin=${asin}] - Fetched from Rain Forest API :`, bookFromRainforestAPI);
 
 
 
