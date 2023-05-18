@@ -1,14 +1,18 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res, UseFilters, UseInterceptors } from '@nestjs/common';
 import { Response } from 'express';
-import { InvalidASINException } from 'src/books/books.exceptions';
 import { BooksService } from 'src/books/books.service';
 import { SearchBooksDto } from 'src/books/dto/search-books.dto';
 import { CategoriesService } from 'src/categories/categories.service';
+import { InvalidAsinExceptionFilter } from 'src/common/filters/invalid-asin-exception.filter';
+import { WrapAdminResponseInterceptor } from 'src/common/interceptors/wrap-admin-response.interceptor';
 
-@Controller('admin-books-33hf3ux')
+@Controller('admin-books')
+@UseInterceptors(WrapAdminResponseInterceptor)
 export class AdminBooksController {
   constructor(private readonly booksService: BooksService, private readonly categoriesService: CategoriesService) { }
+
   @Get() // 2205088165 or B09ZYQRVQB
+  @UseFilters(new InvalidAsinExceptionFilter())
   async findByAsin(@Res() res: Response, @Query() { asin }: SearchBooksDto) {
 
     console.time('findByAsin');
