@@ -1,6 +1,6 @@
 <div>
   {{> search-asin}}
-  <div class="d-flex">
+  <div class="d-flex width-90">
     <div class="p-3">      
       <a href='{{book.url}}' target="_blank">
           <img class="img-fluid img-thumbnail rounded" src='{{book.coverUrl}}' />
@@ -54,13 +54,17 @@
       <p>
         <span class="me-1">Format(s): </span>
         {{#each book.variants}}
-          <a href="{{url}}" target="_blank">{{type}}</a>,
+          {{#if isCurrent}}
+            <a href="{{url}}" target="_blank">{{type}}</a>,
+          {{else}}
+            <a href="{{url}}" target="_blank">{{type}}</a> (<a href="?asin={{asin}}" target="_blank">{{asin}}</a>), 
+          {{/if}}
         {{/each}}
       </p>
       
     </div>
   </div>
-  <div>
+  <div class="width-90 p-3">
     <p class="me-1">Catégories et TOP:</p>
       <ul class="list-group">
         {{#each book.categories}}

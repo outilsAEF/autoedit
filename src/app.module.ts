@@ -6,16 +6,17 @@ import { BooksModule } from './books/books.module';
 import { SearchVolumeController } from './search-volume/search-volume.controller';
 import { SearchVolumeService } from './search-volume/search-volume.service';
 import { SearchVolumeModule } from './search-volume/search-volume.module';
-import { BookCategoriesModule } from './book-categories/book-categories.module';
+import { AdminBooksModule } from './admin-books/admin-books.module';
+import { CategoriesService } from './categories/categories.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     BooksModule,
     SearchVolumeModule,
-    BookCategoriesModule,
+    AdminBooksModule,
   ],
   controllers: [AppController, SearchVolumeController],
-  providers: [AppService, SearchVolumeService],
+  providers: [AppService, SearchVolumeService, CategoriesService],
 })
-export class AppModule {}
+export class AppModule { }

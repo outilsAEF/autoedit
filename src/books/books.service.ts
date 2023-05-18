@@ -58,14 +58,15 @@ export class BooksService {
     const categoriesNotFiltered: Category[] =
       bookFromPAAPI.BrowseNodeInfo.BrowseNodes.sort((a, b) => {
         return +b.SalesRank || 0 - +a.SalesRank || 0;
-      }).map((node): Category => {
-        return {
-          title: node.DisplayName,
-          url: `https://www.amazon.fr/gp/bestsellers/books/${node.Id}?tag=${partnerTag}`,
-          ...(node.SalesRank && { rank: node.SalesRank }),
-          categoryTree: getFullCategory(node),
-        };
-      });
+      }).map((node): Category =>
+      ({
+        id: node.Id,
+        title: node.DisplayName,
+        url: `https://www.amazon.fr/gp/bestsellers/books/${node.Id}?tag=${partnerTag}`,
+        ...(node.SalesRank && { rank: node.SalesRank }),
+        categoryTree: getFullCategory(node),
+      })
+      );
 
     const categories = filterCategories(categoriesNotFiltered);
 
@@ -104,76 +105,76 @@ export class BooksService {
     return book;
   }
 
-  private async getCategoriesFromRainforestAPI(
-    categoriesId: number[]
-  ): Promise<Category[]> {
-    console.log(
-      `getCategoriesFromRainforestAPI with categoriesId ${categoriesId}`
-    );
-    const categories = await Promise.all(
-      categoriesId.map((id) => {
-        return this.getCategoryFromRainforestAPI(id);
-      })
-    );
-    return categories.filter(
-      (category) => category !== undefined
-    ) as Category[];
-  }
+  // private async getCategoriesFromRainforestAPI(
+  //   categoriesId: number[]
+  // ): Promise<Category[]> {
+  //   console.log(
+  //     `getCategoriesFromRainforestAPI with categoriesId ${categoriesId}`
+  //   );
+  //   const categories = await Promise.all(
+  //     categoriesId.map((id) => {
+  //       return this.getCategoryFromRainforestAPI(id);
+  //     })
+  //   );
+  //   return categories.filter(
+  //     (category) => category !== undefined
+  //   ) as Category[];
+  // }
 
-  private async getCategoryFromRainforestAPI(
-    id: number
-  ): Promise<Category | undefined> {
-    console.log(`getCategoryFromRainforestAPI with categoryId ${id}`);
-    const axiosParams = {
-      api_key: this.configService.get<string>('RAINFOREST_APIKEY'),
-      amazon_domain: 'amazon.fr',
-      id,
-      type: 'standard',
-      // include_fields:
-      //   'product.title,product.link,product.authors,product.categories,product.main_image,product.bestsellers_rank',
-    };
+  // private async getCategoryFromRainforestAPI(
+  //   id: number
+  // ): Promise<Category | undefined> {
+  //   console.log(`getCategoryFromRainforestAPI with categoryId ${id}`);
+  //   const axiosParams = {
+  //     api_key: this.configService.get<string>('RAINFOREST_APIKEY'),
+  //     amazon_domain: 'amazon.fr',
+  //     id,
+  //     type: 'standard',
+  //     // include_fields:
+  //     //   'product.title,product.link,product.authors,product.categories,product.main_image,product.bestsellers_rank',
+  //   };
 
-    let response;
-    try {
-      response = await axios.get('https://api.rainforestapi.com/categories', {
-        params: axiosParams,
-      });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          console.error(
-            `HTTP Error [status=${error.response.status},statusText="${error.response.statusText}"] while requesting Rainforest Categories API for categoryId ${id}: ${error.response.data.request_info.message}` //request.info_message comes from Rainforest API
-          );
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log('Error', error.message);
-        }
-        return;
-      }
-    }
+  //   let response;
+  //   try {
+  //     response = await axios.get('https://api.rainforestapi.com/categories', {
+  //       params: axiosParams,
+  //     });
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       if (error.response) {
+  //         console.error(
+  //           `HTTP Error [status=${error.response.status},statusText="${error.response.statusText}"] while requesting Rainforest Categories API for categoryId ${id}: ${error.response.data.request_info.message}` //request.info_message comes from Rainforest API
+  //         );
+  //       } else if (error.request) {
+  //         console.log(error.request);
+  //       } else {
+  //         console.log('Error', error.message);
+  //       }
+  //       return;
+  //     }
+  //   }
 
-    if (!(response && response.data))
-      throw new HttpException(
-        'Internal server error while requesting Rainforest API: response or response.data are undefined. Please check your logs',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+  //   if (!(response && response.data))
+  //     throw new HttpException(
+  //       'Internal server error while requesting Rainforest API: response or response.data are undefined. Please check your logs',
+  //       HttpStatus.INTERNAL_SERVER_ERROR
+  //     );
 
-    const data = response.data;
-    const categoryFromRainforestAPI = data.category;
-    // console.log('response from axios', bookRainForestAPI);
-    console.log(
-      `category name ${categoryFromRainforestAPI.name} category full path ${categoryFromRainforestAPI.path}`
-    );
+  //   const data = response.data;
+  //   const categoryFromRainforestAPI = data.category;
+  //   // console.log('response from axios', bookRainForestAPI);
+  //   console.log(
+  //     `category name ${categoryFromRainforestAPI.name} category full path ${categoryFromRainforestAPI.path}`
+  //   );
 
-    const partnerTag = this.configService.get<string>('PAAPI_PARTNER_TAG');
-    return {
-      name: categoryFromRainforestAPI.name,
-      url: `https://www.amazon.fr/gp/bestsellers/books/${id}?tag=${partnerTag}`,
-      // ...(node.SalesRank && { rank: node.SalesRank }),
-      categoryTree: categoryFromRainforestAPI.path,
-    };
-  }
+  //   const partnerTag = this.configService.get<string>('PAAPI_PARTNER_TAG');
+  //   return {
+  //     name: categoryFromRainforestAPI.name,
+  //     url: `https://www.amazon.fr/gp/bestsellers/books/${id}?tag=${partnerTag}`,
+  //     // ...(node.SalesRank && { rank: node.SalesRank }),
+  //     categoryTree: categoryFromRainforestAPI.path,
+  //   };
+  // }
 
   private async getBookFromRainforestAPI(asin: string) {
     const axiosParams = {
@@ -194,7 +195,7 @@ export class BooksService {
       if (axios.isAxiosError(error)) {
         if (error.response) {
           console.error(
-            `HTTP Error [status=${error.response.status},statusText="${error.response.statusText}"] while requesting Rainforest Product API : ${error.response.data.request_info.message}` //request.info_message comes from Rainforest API
+            `HTTP Error [status=${error.response.status},statusText="${error.response.statusText}"] while requesting Rainforest Product API (ASIN) : ${error.response.data.request_info.message}` //request.info_message comes from Rainforest API
           );
         } else if (error.request) {
           console.log(error.request);

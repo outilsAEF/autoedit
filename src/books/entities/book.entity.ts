@@ -17,6 +17,7 @@ export type Variant = {
 }
 
 export type Category = {
+  id: number;
   name?: string;
   title?: string;
   categoryTree: string;
