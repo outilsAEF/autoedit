@@ -1,5 +1,6 @@
 export class InvalidASINException extends Error {
-  constructor(message) {
+
+  constructor(message, public readonly asin: string) {
     super(message);
     this.name = 'InvalidASINException';
   }

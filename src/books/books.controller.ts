@@ -1,30 +1,33 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res, UseFilters } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Response } from 'express';
 import { SearchBooksDto } from './dto/search-books.dto';
-import { InvalidASINException } from './books.exceptions';
+import { InvalidAsinExceptionFilter } from 'src/common/filters/invalid-asin-exception.filter';
+import { PublicPath } from 'src/common/decorators/public.decorator';
 
 @Controller('book')
+@PublicPath()
 export class BooksController {
-  constructor(private readonly booksService: BooksService) {}
+  constructor(private readonly booksService: BooksService) { }
   @Get() // 2205088165 or B09ZYQRVQB
+  @UseFilters(new InvalidAsinExceptionFilter())
   async findByAsin(@Res() res: Response, @Query() { asin }: SearchBooksDto) {
-    try {
-      const book = await this.booksService.findByAsin(asin);
 
-      res.render('books', {
-        title: `Auto Edit - Informations sur l'ASIN ${asin}`,
-        book,
-      });
-    } catch (error) {
-      console.error(error);
-      res.render('index', {
-        title: `Erreur pour l'ASIN ${asin}`,
-        error: {
-          isInvalidASINError: error instanceof InvalidASINException,
-          asin,
-        },
-      });
-    }
+    const book = await this.booksService.findByAsin(asin);
+
+    res.render('books', {
+      title: `Auto Edit - Informations sur l'ASIN ${asin}`,
+      book,
+    });
+    // } catch (error) {
+    //   console.error(error);
+    //   res.render('index', {
+    //     title: `Erreur pour l'ASIN ${asin}`,
+    //     error: {
+    //       isInvalidASINError: error instanceof InvalidASINException,
+    //       asin,
+    //     },
+    //   });
+    // }
   }
 }

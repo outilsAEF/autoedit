@@ -50,7 +50,7 @@ export class BooksService {
         error.response.body.Errors
       );
       if (error.response.body.Errors[0].Code === 'InvalidParameterValue')
-        throw new InvalidASINException(error.response.body.Errors[0].Message);
+        throw new InvalidASINException(error.response.body.Errors[0].Message, asin);
     }
 
     const bookFromPAAPI = books.ItemsResult.Items[0];

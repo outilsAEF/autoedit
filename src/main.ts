@@ -5,6 +5,7 @@ import { join } from 'path';
 import { engine } from 'express-handlebars';
 import { ValidationPipe } from '@nestjs/common';
 import { secure } from './common/middleware/secure.middleware';
+import { InvalidAsinExceptionFilter } from './common/filters/invalid-asin-exception.filter';
 // import secure from 'ssl-express-www';
 
 async function bootstrap() {

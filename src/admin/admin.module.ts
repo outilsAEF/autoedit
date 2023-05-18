@@ -6,10 +6,10 @@ import { AdminParamGuard } from 'src/common/guards/admin-param.guard';
 @Module({
   imports: [AdminBooksModule],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AdminParamGuard
-    }
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AdminParamGuard
+    // }
   ]
 })
 export class AdminModule { }
