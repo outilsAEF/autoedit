@@ -7,7 +7,7 @@ import axios from 'axios';
 @Injectable()
 export class CategoriesService {
   constructor(private readonly configService: ConfigService) { }
-  async findBestSellersByCategoryId(categoryId: number): Promise<void> {
+  async findBestSellersByCategoryId(categoryId: number): Promise<({ title: string, asin: string, position: string })[]> {
     console.log('CategoriesService with ids', categoryId);
 
     const axiosParams = {
@@ -15,7 +15,7 @@ export class CategoriesService {
       amazon_domain: 'amazon.fr',
       category_id: `bestsellers_${categoryId}`,
       type: 'bestsellers',
-      include_fields: 'bestsellers.title,bestsellers.asin'
+      include_fields: 'bestsellers.title,bestsellers.asin,bestsellers.position'
     }
 
     let response;

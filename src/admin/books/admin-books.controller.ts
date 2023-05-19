@@ -19,17 +19,50 @@ export class AdminBooksController {
     console.time('findByAsin');
     const book = await this.booksService.findByAsin(asin);
     console.timeEnd('findByAsin');
-    const categoriesId = book.categories.map(({ id }) => id);
-    console.log({ categoriesId })
+    const categories = book.categories;
+    console.log({ categoriesId: book.categories.map(({ id }) => id) })
 
-    console.time('findByCategoryId');
-    const bestsellers = await this.categoriesService.findBestSellersByCategoryId(categoriesId[0]);
-    console.timeEnd('findByCategoryId');
-    console.log({ bestsellers })
+    console.time('findBestSellersByCategoryId');
+    const categoriesWithBestSellers = await Promise.all(categories.map(async category => {
+      const bestsellers = await this.categoriesService.findBestSellersByCategoryId(category.id)
+      return {
+        ...category,
+        bestsellers
+      }
+    }));
+    console.timeEnd('findBestSellersByCategoryId');
+    console.log({ categoriesWithBestSellers })
+
+    const WANTED_TOPS = [1, 3, 5, 30];
+
+    console.time('findKindleRanking for tops bestsellers');
+    const categoriesWithTops = await Promise.all(categoriesWithBestSellers.map(async (categoryWithBestsellers) => {
+      const bestSellersFilteredByPosition = categoryWithBestsellers.bestsellers.filter(({ position }) => WANTED_TOPS.includes(+position));
+      console.log(bestSellersFilteredByPosition.length);
+      const tops = await Promise.all(bestSellersFilteredByPosition.map(async (bestseller) => {
+        const topRanking = await this.booksService.findKindleRankingByAsin(bestseller.asin);
+        return {
+          ...bestseller,
+          topRanking
+        }
+      }));
+
+      const score = tops.reduce((prev, curr) => prev + (curr.topRanking || 0), 0);
+
+      return {
+        ...categoryWithBestsellers,
+        tops,
+        score
+      }
+    }));
+    console.timeEnd('findKindleRanking for tops bestsellers');
+
+    console.log(categoriesWithTops);
 
     return {
       title: `Auto Edit - Informations sur l'ASIN ${asin}`,
       book,
+      categoriesWithTops
     };
     // res.render('admin-books', {
     //   title: `Auto Edit - Informations sur l'ASIN ${asin}`,
