@@ -2,9 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
-import { Author, Bestseller, BookWithoutCategories, Variant } from 'src/books/entities/book.entity';
+import { Author, Bestseller, BookWithoutCategories, GlobalRank, Variant } from 'src/books/entities/book.entity';
 setupCache(axios, { ttl: 1000 * 60 * 60 * 4 }); // 4 hours
 
+const ALLOWED_CATEGORIES_FOR_GLOBAL_RANK = ['Boutique Kindle', 'Livres'];
 
 
 @Injectable()
@@ -67,7 +68,9 @@ export class RainforestApiService {
 
   }
 
-  async findKindleRankingByAsin(asin: string): Promise<number | undefined> {
+
+
+  async findGlobalRankByAsin(asin: string): Promise<GlobalRank | null> {
     const axiosParams = {
       ...this.defaultApiParams,
       asin,
@@ -108,9 +111,9 @@ export class RainforestApiService {
     const data = response.data;
     const bookFromRainforestAPI = data.product;
 
-    const rank = bookFromRainforestAPI.bestsellers_rank ? bookFromRainforestAPI.bestsellers_rank[0].rank : undefined;
+    const globalRank = getGlobalRank(bookFromRainforestAPI);
 
-    return rank;
+    return globalRank;
   }
 
   async findBestSellersByCategoryId(categoryId: number): Promise<Bestseller[]> {
@@ -161,6 +164,16 @@ export class RainforestApiService {
   }
 }
 
+const getGlobalRank = (book): GlobalRank | null => {
+  if (!book.bestsellers_rank) return null;
+
+  const { category, rank } = book.bestsellers_rank[0];
+
+  if (!ALLOWED_CATEGORIES_FOR_GLOBAL_RANK.includes(category)) return null;
+
+  return { category, rank };
+}
+
 const convertBookFromRainforestApiToBook = (book): BookWithoutCategories => {
   return {
     asin: book.asin,
@@ -170,7 +183,7 @@ const convertBookFromRainforestApiToBook = (book): BookWithoutCategories => {
     coverUrl: book.main_image.link,
     title: book.title,
     url: book.link,
-    globalRank: (book.bestsellers_rank && book.bestsellers_rank[0]?.rank) || undefined,
+    globalRank: getGlobalRank(book),
     hasAPlusContent: book.a_plus_content?.has_a_plus_content,
     rating: {
       value: book.rating,

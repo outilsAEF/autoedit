@@ -28,7 +28,7 @@
         <span class="me-1">Classement global:</span>
         <span class="badge bg-primary rounded-pill">
           {{#if book.globalRank}}
-            {{book.globalRank}}
+            {{book.globalRank.rank}} ({{book.globalRank.category}})
           {{else}}
             n/a
           {{/if}}

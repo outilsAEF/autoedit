@@ -18,7 +18,8 @@ export class CategoriesService {
     const bestSellersFilteredByPosition = bestsellers.filter(({ position }) => WANTED_TOPS.includes(+position));
 
     const tops = await Promise.all(bestSellersFilteredByPosition.map(async ({ asin, position }) => {
-      const topRanking = await this.booksService.findKindleRankingByAsin(asin);
+      const globalRank = await this.booksService.findGlobalRankByAsin(asin);
+      const topRanking = globalRank?.rank;
       console.log(`[category-${id}] [asin-${asin}] position: ${position} topRanking: ${topRanking}`)
       return {
         position,

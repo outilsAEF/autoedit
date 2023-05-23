@@ -32,7 +32,7 @@ export type Book = {
   authors: Author[];
   coverUrl: string;
   categories: Category[];
-  globalRank?: number;
+  globalRank: GlobalRank | null;
   hasAPlusContent: boolean;
   rating: Rating;
   variants: Variant[];
@@ -50,4 +50,9 @@ export type Bestseller = {
 export type Top = {
   position: string,
   topRanking: number | undefined
+}
+
+export type GlobalRank = {
+  category: string,
+  rank: number
 }
