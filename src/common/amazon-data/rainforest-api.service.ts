@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
-import { Author, BookWithoutCategories, Variant } from 'src/books/entities/book.entity';
+import { Author, Bestsellers, BookWithoutCategories, Variant } from 'src/books/entities/book.entity';
 setupCache(axios, { ttl: 1000 * 60 * 60 * 4 }); // 4 hours
 
 
@@ -111,6 +111,53 @@ export class RainforestApiService {
     const rank = bookFromRainforestAPI.bestsellers_rank ? bookFromRainforestAPI.bestsellers_rank[0].rank : undefined;
 
     return rank;
+  }
+
+  async findBestSellersByCategoryId(categoryId: number): Promise<Bestsellers[]> {
+    // console.log('CategoriesService with ids', categoryId);
+
+    const axiosParams = {
+      ...this.defaultApiParams,
+      category_id: `bestsellers_${categoryId}`,
+      type: 'bestsellers',
+      include_fields: 'bestsellers.title,bestsellers.asin,bestsellers.position'
+    }
+
+    let response;
+    try {
+      response = await axios.get('https://api.rainforestapi.com/request', {
+        params: axiosParams,
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error(
+            `HTTP Error [status=${error.response.status},statusText="${error.response.statusText}"] while requesting Rainforest Product API (Bestsellers) : ${error.response.data.request_info.message}` //request.info_message comes from Rainforest API
+          );
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+        throw new HttpException(
+          'Internal server error while requesting Rainforest API, please check your logs',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    }
+
+    if (!(response && response.data)) {
+      throw new HttpException(
+        'Internal server error while requesting Rainforest API: response or response.data are undefined. Please check your logs',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+
+    const data = response.data;
+    const bestsellers = data.bestsellers;
+    return bestsellers;
+
+
   }
 }
 

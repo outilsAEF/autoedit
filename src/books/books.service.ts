@@ -1,12 +1,9 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
-import { Author, Book, Category, Variant } from './entities/book.entity';
-// import axios from 'axios';
-import { setupCache } from 'axios-cache-interceptor';
-import { InvalidASINException } from './books.exceptions';
+import { Book } from './entities/book.entity';
 import { AmazonPaapiService } from 'src/common/amazon-data/amazon-paapi.service';
 import { RainforestApiService } from 'src/common/amazon-data/rainforest-api.service';
-// setupCache(axios, { ttl: 1000 * 60 * 60 * 4 }); // 4 hours
+import { Injectable } from '@nestjs/common';
 
 
 

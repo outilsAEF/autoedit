@@ -40,3 +40,9 @@ export type Book = {
 }
 
 export type BookWithoutCategories = Omit<Book, "categories">;
+
+export type Bestsellers = {
+  asin: string,
+  position: string,
+  title: string
+}
