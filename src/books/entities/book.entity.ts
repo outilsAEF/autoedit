@@ -41,8 +41,13 @@ export type Book = {
 
 export type BookWithoutCategories = Omit<Book, "categories">;
 
-export type Bestsellers = {
+export type Bestseller = {
   asin: string,
   position: string,
   title: string
+}
+
+export type Top = {
+  position: string,
+  topRanking: number | undefined
 }

@@ -1,6 +1,5 @@
-import { Controller, Get, Query, Res, UseFilters } from '@nestjs/common';
+import { Controller, Get, Query, Render, UseFilters } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { Response } from 'express';
 import { SearchBooksDto } from './dto/search-books.dto';
 import { InvalidAsinExceptionFilter } from 'src/common/filters/invalid-asin-exception.filter';
 import { PublicPath } from 'src/common/decorators/public.decorator';
@@ -9,16 +8,18 @@ import { PublicPath } from 'src/common/decorators/public.decorator';
 @PublicPath()
 export class BooksController {
   constructor(private readonly booksService: BooksService) { }
+
   @Get() // 2205088165 or B09ZYQRVQB
+  @Render('books')
   @UseFilters(new InvalidAsinExceptionFilter())
-  async findByAsin(@Res() res: Response, @Query() { asin }: SearchBooksDto) {
+  async findByAsin(@Query() { asin }: SearchBooksDto) {
 
     const book = await this.booksService.findByAsin(asin);
 
-    res.render('books', {
+    return {
       title: `Auto Edit - Informations sur l'ASIN ${asin}`,
       book,
-    });
+    };
 
   }
 }

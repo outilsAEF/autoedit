@@ -1,37 +1,20 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { BooksService } from 'src/books/books.service';
 
 @Controller('api/categories')
 export class CategoriesController {
   constructor(
     private readonly categoriesService: CategoriesService,
-    private readonly booksService: BooksService) { }
+  ) { }
 
   @Get()
-  async findTopsByCategoryId(@Query('id') id: number) {
-    console.log(`[category-${id}] findTopsByCategoryId`);
+  async findTopsAndScoreByCategoryId(@Query('id') id: number) {
+    console.log(`[category-${id}] findTopsAndScoreByCategoryId`);
 
-    // console.time(`[category-${id}] findTopsByCategoryId`);
-    const bestsellers = await this.categoriesService.findBestSellersByCategoryId(id);
+    const tops = await this.categoriesService.findTopsByCategoryId(id);
 
-    // console.log(`[category-${id}]`, { bestsellers })
+    const score = this.categoriesService.calculateScore(tops);
 
-    const WANTED_TOPS = [1, 3, 5, 30];
-
-    const bestSellersFilteredByPosition = bestsellers.filter(({ position }) => WANTED_TOPS.includes(+position));
-    const tops = await Promise.all(bestSellersFilteredByPosition.map(async ({ asin, position }) => {
-      const topRanking = await this.booksService.findKindleRankingByAsin(asin);
-      console.log(`[category-${id}] [asin-${asin}] position: ${position} topRanking: ${topRanking}`)
-      return {
-        position,
-        topRanking
-      }
-    }));
-
-    const score = tops.reduce((prev, curr) => prev + (curr.topRanking || 0), 0);
-
-    // console.timeEnd(`[category-${id}] findTopsByCategoryId`);
 
     return {
       tops,

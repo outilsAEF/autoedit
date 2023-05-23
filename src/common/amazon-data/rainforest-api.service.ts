@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { setupCache } from 'axios-cache-interceptor';
-import { Author, Bestsellers, BookWithoutCategories, Variant } from 'src/books/entities/book.entity';
+import { Author, Bestseller, BookWithoutCategories, Variant } from 'src/books/entities/book.entity';
 setupCache(axios, { ttl: 1000 * 60 * 60 * 4 }); // 4 hours
 
 
@@ -113,7 +113,7 @@ export class RainforestApiService {
     return rank;
   }
 
-  async findBestSellersByCategoryId(categoryId: number): Promise<Bestsellers[]> {
+  async findBestSellersByCategoryId(categoryId: number): Promise<Bestseller[]> {
     // console.log('CategoriesService with ids', categoryId);
 
     const axiosParams = {
