@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import amazonPaapi from 'amazon-paapi';
 import { Author, Book, Category, Variant } from './entities/book.entity';
@@ -34,10 +34,6 @@ export class BooksService {
         'BrowseNodeInfo.BrowseNodes',
         'BrowseNodeInfo.BrowseNodes.Ancestor',
         'BrowseNodeInfo.BrowseNodes.SalesRank',
-        // 'BrowseNodeInfo.WebsiteSalesRank',
-        // 'Images.Primary.Medium',
-        // 'ItemInfo.ByLineInfo',
-        // 'ItemInfo.Title',
       ],
     };
 
@@ -45,6 +41,8 @@ export class BooksService {
     try {
       books = await amazonPaapi.GetItems(commonParameters, requestParameters);
     } catch (error) {
+      if (!error.response) throw new InternalServerErrorException('Could not connect to third party API');
+
       console.error(
         'Error while getting results from Amazon:',
         error.response.body.Errors
@@ -75,6 +73,8 @@ export class BooksService {
     const bookFromRainforestAPI = await this.getBookFromRainforestAPI(asin);
     console.timeEnd(`[asin=${asin}] - Fetching from Rain Forest API`);
     console.log(`[asin=${asin}] - Fetched from Rain Forest API :`, bookFromRainforestAPI);
+
+
 
 
 
@@ -109,9 +109,9 @@ export class BooksService {
     // console.log(`[asin=${asin}] - findKindleRankingByAsin - with asin`, asin);
 
     // // console.log(`[asin=${asin}] - Fetching from Rain Forest API`);
-    console.time(`[asin=${asin}] - findKindleRankingByAsin - Fetching from Rain Forest API`);
+    // console.time(`[asin=${asin}] - findKindleRankingByAsin - Fetching from Rain Forest API`);
     const ranking = await this.getKindleRankingFromRainforestAPI(asin);
-    console.timeEnd(`[asin=${asin}] - findKindleRankingByAsin - Fetching from Rain Forest API`);
+    // console.timeEnd(`[asin=${asin}] - findKindleRankingByAsin - Fetching from Rain Forest API`);
 
     return ranking;
   }
@@ -234,7 +234,7 @@ export class BooksService {
     // console.log(`Reading from Rainforest API - Bestseller rank? ${bookFromRainforestAPI.bestsellers_rank ? 'true' : 'false'}`);
 
     const rank = bookFromRainforestAPI.bestsellers_rank ? bookFromRainforestAPI.bestsellers_rank[0].rank : undefined;
-    console.log(`[asin=${asin}] kindle ranking: ${rank}`);
+    // console.log(`[asin=${asin}] kindle ranking: ${rank}`);
 
     return rank;
   }

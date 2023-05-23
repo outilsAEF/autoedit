@@ -6,6 +6,7 @@ import { engine } from 'express-handlebars';
 import { ValidationPipe } from '@nestjs/common';
 import { secure } from './common/middleware/secure.middleware';
 import { InvalidAsinExceptionFilter } from './common/filters/invalid-asin-exception.filter';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 // import secure from 'ssl-express-www';
 
 async function bootstrap() {
@@ -18,6 +19,7 @@ async function bootstrap() {
       whitelist: true,
     })
   );
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useStaticAssets(join(__dirname, '../..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.engine(

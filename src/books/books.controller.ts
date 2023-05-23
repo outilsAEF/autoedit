@@ -19,15 +19,6 @@ export class BooksController {
       title: `Auto Edit - Informations sur l'ASIN ${asin}`,
       book,
     });
-    // } catch (error) {
-    //   console.error(error);
-    //   res.render('index', {
-    //     title: `Erreur pour l'ASIN ${asin}`,
-    //     error: {
-    //       isInvalidASINError: error instanceof InvalidASINException,
-    //       asin,
-    //     },
-    //   });
-    // }
+
   }
 }

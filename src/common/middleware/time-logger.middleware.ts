@@ -4,9 +4,18 @@ import { Request } from 'express';
 @Injectable()
 export class TimeLoggerMiddleware implements NestMiddleware {
   use(req: Request, res: any, next: () => void) {
-    const asin = req.query['asin'];
-    console.time(`[asin=${asin}] Total request-response time`);
-    res.on('finish', () => console.timeEnd(`[asin=${asin}] Total request-response time`));
+    let paramKey, paramLog = '';
+    if (req.baseUrl === '/admin-books' || req.baseUrl === '/book') {
+      paramKey = 'asin';
+      paramLog = 'asin'
+    } else if (req.baseUrl === '/api/categories') {
+      paramKey = 'id'
+      paramLog = 'category';
+    }
+
+    const paramValue = req.query[paramKey];
+    console.time(`[${paramLog}=${paramValue}] Total request-response time`);
+    res.on('finish', () => console.timeEnd(`[${paramLog}=${paramValue}] Total request-response time`))
     next();
   }
 }
