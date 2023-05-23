@@ -6,6 +6,7 @@ export class HttpExceptionFilter<T extends HttpException> implements ExceptionFi
   catch(exception: T, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
+    console.error(exception);
 
     res.render('index', {
       title: `Erreur interne`,
