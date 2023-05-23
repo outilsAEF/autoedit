@@ -4,9 +4,10 @@ import { AdminBooksService } from './admin-books.service';
 import { BooksService } from 'src/books/books.service';
 import { CategoriesService } from 'src/admin/categories/categories.service';
 import { AmazonPaapiService } from 'src/common/amazon-data/amazon-paapi.service';
+import { RainforestApiService } from 'src/common/amazon-data/rainforest-api.service';
 
 @Module({
   controllers: [AdminBooksController],
-  providers: [AdminBooksService, BooksService, CategoriesService, AmazonPaapiService]
+  providers: [AdminBooksService, BooksService, CategoriesService, AmazonPaapiService, RainforestApiService]
 })
 export class AdminBooksModule { }

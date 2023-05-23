@@ -13,6 +13,7 @@ import { CategoriesController } from './admin/categories/categories.controller';
 import { CategoriesModule } from './admin/categories/categories.module';
 import { BooksService } from './books/books.service';
 import { AmazonPaapiService } from './common/amazon-data/amazon-paapi.service';
+import { RainforestApiService } from './common/amazon-data/rainforest-api.service';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { AmazonPaapiService } from './common/amazon-data/amazon-paapi.service';
     CategoriesModule,
   ],
   controllers: [AppController, SearchVolumeController, CategoriesController],
-  providers: [AppService, SearchVolumeService, CategoriesService, BooksService, AmazonPaapiService],
+  providers: [AppService, SearchVolumeService, CategoriesService, BooksService, AmazonPaapiService, RainforestApiService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

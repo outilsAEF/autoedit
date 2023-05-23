@@ -25,7 +25,7 @@ export type Category = {
   url: string;
 };
 
-export class Book {
+export type Book = {
   asin: string;
   title: string;
   url: string;
@@ -37,5 +37,6 @@ export class Book {
   rating: Rating;
   variants: Variant[];
   publicationDate: string;
-
 }
+
+export type BookWithoutCategories = Omit<Book, "categories">;
