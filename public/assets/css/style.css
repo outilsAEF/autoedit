@@ -23,6 +23,11 @@ header{
   background-color: black;
 }
 
+.admin {
+  /* background-color:var(--bs-gray-200); */
+  background-color:lightyellow
+}
+
 header {
   font-size:23.8px;  
 }
