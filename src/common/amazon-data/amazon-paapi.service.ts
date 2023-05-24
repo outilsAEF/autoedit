@@ -1,11 +1,11 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InvalidASINException } from 'src/books/books.exceptions';
-import { Book, Category } from 'src/books/entities/book.entity';
+import { Category } from 'src/books/entities/book.entity';
 import amazonPaapi from 'amazon-paapi';
 import { ConfigService } from '@nestjs/config';
 
 
-const CATEGORY_NODE_NAME_TO_NOT_DISPLAY = ['Catégories'];
+const CATEGORY_NODE_NAME_TO_NOT_DISPLAY = ['Catégories', 'Boutique Kindle', 'Thèmes'];
 const CATEGORY_TREE_TO_NOT_SHOW_CONTAINS = 'Self Service';
 
 
@@ -72,22 +72,30 @@ const getCategories = (node, partnerTag): Category =>
   title: node.DisplayName,
   url: `https://www.amazon.fr/gp/bestsellers/books/${node.Id}?tag=${partnerTag}`,
   ...(node.SalesRank && { rank: node.SalesRank }),
-  categoryTree: getFullCategory(node),
+  categoryTree: getFullCategory(node).slice(0, -1 * CATEGORY_TREE_SEPARATOR.length),
 })
+
+
+const CATEGORY_TREE_SEPARATOR = ' > ';
 
 const getFullCategory = (node): string => {
   let categoryTree = '';
-  if (!node.Ancestor) {
-    categoryTree = node.DisplayName;
-  } else if (!CATEGORY_NODE_NAME_TO_NOT_DISPLAY.includes(node.DisplayName)) {
+  if (categoryIsRoot(node)) {
+    if (displayNameCanBeIncluded(node)) {
+      categoryTree = node.DisplayName.concat(CATEGORY_TREE_SEPARATOR);
+    }
+  } else if (displayNameCanBeIncluded(node)) {
     categoryTree = getFullCategory(node.Ancestor)
-      .concat(' > ')
-      .concat(node.DisplayName);
+      .concat(node.DisplayName)
+      .concat(CATEGORY_TREE_SEPARATOR)
   } else {
     categoryTree = getFullCategory(node.Ancestor);
   }
   return categoryTree;
 };
+
+const categoryIsRoot = (node) => !node.Ancestor;
+const displayNameCanBeIncluded = (node) => !CATEGORY_NODE_NAME_TO_NOT_DISPLAY.includes(node.DisplayName)
 
 const filterCategories = (categories: Category[]): Category[] => {
   return categories.filter(
