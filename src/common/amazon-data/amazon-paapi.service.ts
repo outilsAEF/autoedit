@@ -6,7 +6,6 @@ import { ConfigService } from '@nestjs/config';
 
 
 const CATEGORY_NODE_NAME_TO_NOT_DISPLAY = ['Catégories', 'Boutique Kindle', 'Thèmes'];
-const CATEGORY_TREE_TO_NOT_SHOW_CONTAINS = 'Self Service';
 
 
 
@@ -22,7 +21,7 @@ export class AmazonPaapiService {
   }
 
   private async findCategoriesByAsins(asins: string[], withSalesRank: boolean): Promise<{ categories: Category[], asinsWithErrors?: string[] }> {
-
+    console.log({ asins })
     const partnerTag = this.configService.get<string>('PAAPI_PARTNER_TAG');
     const commonParameters = {
       AccessKey: this.configService.get<string>('PAAPI_ACCESS_KEY'),
@@ -32,14 +31,14 @@ export class AmazonPaapiService {
       Marketplace: this.configService.get<string>('PAAPI_MARKETPLACE'),
     };
 
+    const apiResources = ['BrowseNodeInfo.BrowseNodes',
+      'BrowseNodeInfo.BrowseNodes.Ancestor'];
+    if (withSalesRank) apiResources.push('BrowseNodeInfo.BrowseNodes.SalesRank');
+
     const requestParameters = {
       ItemIds: asins,
       IdemIdType: 'ASIN',
-      Resources: [
-        'BrowseNodeInfo.BrowseNodes',
-        'BrowseNodeInfo.BrowseNodes.Ancestor',
-        (withSalesRank) ? 'BrowseNodeInfo.BrowseNodes.SalesRank' : '',
-      ],
+      Resources: apiResources
     };
 
 
@@ -88,16 +87,7 @@ const extractAsinFromError = (errorNode): string => {
   return asin;
 }
 
-const sortCategories = (nodeA, nodeB) => {
-  return +nodeB.SalesRank || 0 - +nodeA.SalesRank || 0;
-}
 
-const removeUnwantedCategories = (categories: Category[]): Category[] => {
-  return categories.filter(
-    (category) =>
-      !category.categoryTree.includes(CATEGORY_TREE_TO_NOT_SHOW_CONTAINS)
-  );
-};
 
 const getCategories = (node, partnerTag): Category =>
 ({

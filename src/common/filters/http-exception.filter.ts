@@ -1,25 +1,33 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Catch(HttpException)
 export class HttpExceptionFilter<T extends HttpException> implements ExceptionFilter {
   catch(exception: T, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
+    const req = ctx.getRequest<Request>();
+
     console.error(exception);
 
     let message = `Erreur interne pendant la requête. Veuillez vérifier les logs`;
+    let title = `Erreur interne`;
 
     const exceptionResponse = exception.getResponse();
     if (typeof exceptionResponse === 'object') {
+      console.log({ exceptionResponse });
       message = (exceptionResponse as any).message.join(', ');
+      title = 'Erreur de validation';
+
     }
 
+    const templateName = (req.path.includes('admin')) ? 'admin' : 'index';
 
-    res.render('index', {
-      title: `Erreur interne`,
+
+    res.render(templateName, {
+      title,
       error: {
-        message
+        message: `Erreur lors de la validaiton: ${message}`,
       }
     })
   }

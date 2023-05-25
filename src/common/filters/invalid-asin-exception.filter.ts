@@ -15,7 +15,7 @@ export class InvalidAsinExceptionFilter<T extends InvalidASINException> implemen
 
     const templateName = (req.path.includes('admin')) ? 'admin' : 'index';
 
-    console.log({ templateName })
+    // console.log({ templateName })
     res.render(templateName, {
       title: `Erreur pour l'ASIN ${asin}`,
       error: {

@@ -1,9 +1,11 @@
 
-import { Book, GlobalRank } from './entities/book.entity';
+import { Book, Category, GlobalRank } from './entities/book.entity';
 import { AmazonPaapiService } from 'src/common/amazon-data/amazon-paapi.service';
 import { RainforestApiService } from 'src/common/amazon-data/rainforest-api.service';
 import { Injectable } from '@nestjs/common';
 import { InvalidASINException } from './books.exceptions';
+
+const CATEGORY_TREE_TO_NOT_SHOW_CONTAINS = 'Self Service';
 
 
 @Injectable()
@@ -35,20 +37,25 @@ export class BooksService {
       throw new InvalidASINException('Invalid ASIN(s)', firstAsin);
     }
 
-    // const otherAsinsResult = await this.amazonPaapiService.findCategoriesByAsinsWithoutSalesRank(asins.slice(1));
-    const otherAsins = asins.slice(1);
-    const otherAsinsResult = await Promise.all(otherAsins.map(asin => this.amazonPaapiService.findCategoriesByAsinsWithoutSalesRank([asin])));
-    const otherCategories = otherAsinsResult.map(asinResult => asinResult.categories).flat();
-    const otherAsinErrors = otherAsinsResult.map(asinResult => asinResult.asinsWithErrors).filter(errors => !!errors).flat() as string[];
+    let unfilteredCategories = firstAsinResult.categories;
+    let asinsWithErrors: string[] | undefined;
+    if (asins.length > 1) {
+      const otherAsins = asins.slice(1);
+      const otherAsinsResult = await this.amazonPaapiService.findCategoriesByAsinsWithoutSalesRank(otherAsins);
+      unfilteredCategories = unfilteredCategories.concat(otherAsinsResult.categories);
+      asinsWithErrors = otherAsinsResult.asinsWithErrors;
+    }
+
+    const categories = removeUnwantedCategories(unfilteredCategories).sort(sortCategories);
 
     const bookFromRainforestAPI = await this.rainforestApiService.findBookByAsin(firstAsin);
 
     return {
       book: {
-        categories: firstAsinResult.categories.concat(otherCategories),
+        categories,
         ...bookFromRainforestAPI
       },
-      asinsWithErrors: otherAsinErrors
+      asinsWithErrors
     };
   }
 
@@ -60,5 +67,16 @@ export class BooksService {
 
   }
 }
+
+const sortCategories = (catA: Category, catB: Category) => {
+  return (catB.rank || 0) - (catA.rank || 0);
+}
+
+const removeUnwantedCategories = (categories: Category[]): Category[] => {
+  return categories.filter(
+    (category) =>
+      !category.categoryTree.includes(CATEGORY_TREE_TO_NOT_SHOW_CONTAINS)
+  );
+};
 
 
