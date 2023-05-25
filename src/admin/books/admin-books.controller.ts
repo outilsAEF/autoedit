@@ -12,18 +12,23 @@ export class AdminBooksController {
   @Render('admin-books')
   @UseFilters(new InvalidAsinExceptionFilter())
   async findByAsins(@Query() { asins }: SearchBooksDto) {
-    /* 
+    /* no errors
     B09ZYQRVQB 2205088165 B019LPMZ2K
     */
+    /* errors
+    2205088165 B019LPMZ2E B019LPMZ2K B019LPMZ2F
+    */
+
     console.log({ asins });
 
     console.time('findByAsins');
-    const book = await this.booksService.findByAsin(asins[0]);
+    const { book, asinsWithErrors } = await this.booksService.findByAsins(asins);
     console.timeEnd('findByAsins');
 
     return {
       title: `Auto Edit ADMIN - Informations sur l'ASIN ${asins[0]}`,
       book,
+      asinsWithErrors,
     }
 
   }

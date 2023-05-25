@@ -31,6 +31,12 @@
       {{error.message}}
     </div>
   {{/if}}
+
+  {{#if asinsWithErrors}}
+    <div class="alert alert-warning d-flex justify-content-center p-1 fs-6 mb-5">    
+      ASIN(s) invalide(s) : {{asinsWithErrors}}
+    </div>
+  {{/if}}
   
  
   
