@@ -8,10 +8,18 @@ export class HttpExceptionFilter<T extends HttpException> implements ExceptionFi
     const res = ctx.getResponse<Response>();
     console.error(exception);
 
+    let message = `Erreur interne pendant la requête. Veuillez vérifier les logs`;
+
+    const exceptionResponse = exception.getResponse();
+    if (typeof exceptionResponse === 'object') {
+      message = (exceptionResponse as any).message.join(', ');
+    }
+
+
     res.render('index', {
       title: `Erreur interne`,
       error: {
-        message: `Erreur interne pendant la requête. Veuillez vérifier les logs`
+        message
       }
     })
   }
