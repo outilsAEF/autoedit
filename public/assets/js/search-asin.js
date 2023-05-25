@@ -1,6 +1,6 @@
 const searchAsinForm = document.querySelector('.search-asin-form');
 const searchAsinBtn = document.querySelector('.search-asin-btn');
-const searchAsinInput = document.querySelector('input#asin');
+const searchAsinInput = document.querySelector('.input-asin');
 const spanSearchAsinBtnText = document.querySelector('.search-asin-btn-text')
 const spanSearchAsinBtnTextLoading = document.querySelector('.search-asin-btn-text-loading')
 
