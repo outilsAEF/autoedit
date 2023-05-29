@@ -10,6 +10,7 @@ const ALLOWED_CATEGORIES_FOR_GLOBAL_RANK = ['Boutique Kindle', 'Livres'];
 
 @Injectable()
 export class RainforestApiService {
+
   private defaultApiParams: Record<string, string> = {
     api_key: '',
     amazon_domain: 'amazon.fr',
@@ -18,6 +19,52 @@ export class RainforestApiService {
   constructor(private readonly configService: ConfigService) {
     this.defaultApiParams.api_key = this.configService.get<string>('RAINFOREST_APIKEY') as string;
 
+  }
+
+  async findTotalResultsByKeyword(keyword: string): Promise<number> {
+    const axiosParams = {
+      ...this.defaultApiParams,
+      search_term: keyword,
+      type: 'search',
+      include_fields:
+        'pagination.total_results',
+
+    }
+
+    let response;
+    try {
+      response = await axios.get('https://api.rainforestapi.com/request', {
+        params: axiosParams,
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error(
+            `HTTP Error [status=${error.response.status},statusText="${error.response.statusText}"] while requesting Rainforest Product API (Keyword) : ${error.response.data.request_info.message}` //request.info_message comes from Rainforest API
+          );
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log('Error', error.message);
+        }
+        throw new HttpException(
+          'Internal server error while requesting Rainforest API, please check your logs',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    }
+
+    if (!(response && response.data))
+      throw new HttpException(
+        'Internal server error while requesting Rainforest API: response or response.data are undefined. Please check your logs',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+
+    const data = response.data;
+    const totalResults = data.pagination.total_results;
+
+
+    return totalResults;
   }
 
   async findBookByAsin(asin: string): Promise<BookWithoutCategories> {
