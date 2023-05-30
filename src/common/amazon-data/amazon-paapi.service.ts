@@ -48,6 +48,8 @@ export class AmazonPaapiService {
         throw new InvalidASINException(error.response.body.Errors[0].Message, asin);
     }
 
+    if (!books.ItemsResult) { throw new InvalidASINException('', asin) }
+
     const bookFromPAAPI = books.ItemsResult.Items[0];
 
     const categoriesNotFiltered: Category[] =
