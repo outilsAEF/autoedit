@@ -2,8 +2,6 @@
 <div class="container">
   <div class="d-flex justify-content-center py-5 width-90">
     <form class='search-asin-form w-75' role='search' method='get' action='/book'>
-    {{!-- <form class='search-asin-form w-75' role='search' method='get' action='/{{adminParam}}'> --}}
-      {{!-- '{{adminParam}}' --}}
       <div class="input-group gap-2">        
         <input
           id='asin'
@@ -12,7 +10,7 @@
           class='form-control input-asin'
           placeholder='Saisir un ASIN ...'
           aria-label='Saisir un ASIN'
-          aria-describedby="basic-addon1"
+          aria-describedby="asin"
           minlength="10"
           maxlength="10"
           required 
