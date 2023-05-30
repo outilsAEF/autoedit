@@ -1,11 +1,11 @@
 import { Controller, Get, Query, Render } from '@nestjs/common';
+import { SearchKeywordsDto } from './dto/search-keywords.dto';
 
 @Controller('admin-keywords')
 export class AdminKeywordsController {
   @Get()
   @Render('admin-keywords')
-  async prepareForm(@Query('keywords') theKeywords: string) {
-    const keywords = theKeywords.split("\n").map(keyword => keyword.trim()).filter(keyword => !!keyword);
+  async prepareForm(@Query() { keywords }: SearchKeywordsDto) {
     return { keywords }
   }
 }
