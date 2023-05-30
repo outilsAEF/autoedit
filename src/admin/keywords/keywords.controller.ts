@@ -6,14 +6,13 @@ export class KeywordsController {
   constructor(private readonly rainforestApiService: RainforestApiService) { }
 
   @Get()
-  async findTotalResultsByKeyword(@Query('kw') keyword: string) {
-    console.log(`[keyword-${keyword}] findTotalResultsByKeyword`);
-
+  async findTotalResultsByKeyword(@Query('keyword') keyword: string) {
     const totalResults = await this.rainforestApiService.findTotalResultsByKeyword(keyword);
-
+    console.log(`[keyword-${keyword}] findTotalResultsByKeyword - totalResults: ${totalResults}`);
     return {
       totalResults
     }
-
   }
+
+
 }

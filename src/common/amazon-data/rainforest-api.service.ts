@@ -21,7 +21,7 @@ export class RainforestApiService {
 
   }
 
-  async findTotalResultsByKeyword(keyword: string): Promise<number> {
+  async findTotalResultsByKeyword(keyword: string): Promise<number | null> {
     const axiosParams = {
       ...this.defaultApiParams,
       search_term: keyword,
@@ -61,8 +61,7 @@ export class RainforestApiService {
       );
 
     const data = response.data;
-    const totalResults = data.pagination.total_results;
-
+    const totalResults = data.pagination?.total_results || null;
 
     return totalResults;
   }
