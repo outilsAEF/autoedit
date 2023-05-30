@@ -19,12 +19,11 @@ import { RainforestApiService } from './common/amazon-data/rainforest-api.servic
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     BooksModule,
-    SearchVolumeModule,
     AdminModule,
     CategoriesModule,
   ],
-  controllers: [AppController, SearchVolumeController, CategoriesController],
-  providers: [AppService, SearchVolumeService, CategoriesService, BooksService, AmazonPaapiService, RainforestApiService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
