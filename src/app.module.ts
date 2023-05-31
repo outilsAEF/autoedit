@@ -21,6 +21,7 @@ import { RainforestApiService } from './common/amazon-data/rainforest-api.servic
     BooksModule,
     AdminModule,
     CategoriesModule,
+    SearchVolumeModule
   ],
   controllers: [AppController],
   providers: [AppService],

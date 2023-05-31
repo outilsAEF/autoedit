@@ -7,9 +7,10 @@ export class SearchVolumeService {
     console.log('SearchVolumeService - find by keyword: ', keyword);
 
     const browser = await firefox.launch({
-      headless: true,
+      headless: false,
       args: ['--no-sandbox'],
     });
+
     const context = await browser.newContext();
     context.setDefaultTimeout(10 * 1000);
     const page = await context.newPage();
@@ -72,6 +73,10 @@ export class SearchVolumeService {
       'SearchVolumeService - after looking for frame vous etes humain, before click on "Vous êtes humain"'
     );
 
+    const ahrefskwLocator = await page.locator('.ReactModalPortal table tbody tr:nth-child(1) td p');
+    const textKwLocator = ahrefskwLocator.textContent();
+    console.log(textKwLocator);
+
     await label.check();
     await new Promise((resolve) =>
       setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
@@ -93,6 +98,7 @@ export class SearchVolumeService {
     https://www.zenrows.com/blog/playwright-cloudflare-bypass#go-around-playwright-limitations
     https://www.zenrows.com/
     
+    npx playwright codegen https://ahrefs.com/fr/amazon-keyword-tool
     */
 
     return -1;
