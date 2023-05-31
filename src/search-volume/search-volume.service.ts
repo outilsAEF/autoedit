@@ -3,11 +3,11 @@ import { firefox } from 'playwright';
 
 @Injectable()
 export class SearchVolumeService {
-  async findByKeyword(keyword: string): Promise<number> {
-    console.log('SearchVolumeService - find by keyword: ', keyword);
+  async findAhrefsSearchVolume(keyword: string): Promise<Map<string, string>> {
+    console.log(`[keyword=${keyword}] - findAhrefsSearchVolume - START`);
 
     const browser = await firefox.launch({
-      headless: false,
+      headless: true,
       args: ['--no-sandbox'],
     });
 
@@ -17,90 +17,71 @@ export class SearchVolumeService {
     await page.setViewportSize({ width: 1366, height: 768 });
 
     await page.goto('https://ahrefs.com/fr/amazon-keyword-tool');
-    // Add a random delay of 1 to 3 seconds to simulate human behavior
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
-    console.log('SearchVolumeService - before click on keyword input');
 
+
+    await waitRandom();
     await page.getByPlaceholder('Entrez un mot-cle').click();
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
-    console.log('SearchVolumeService - before writing keyword');
 
+    await waitRandom();
     await page
       .getByPlaceholder('Entrez un mot-cle')
-      .fill('investissement immobilier');
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
-    console.log('SearchVolumeService - before click on country dropdown');
+      .fill(keyword);
 
+    await waitRandom();
     await page.getByRole('button', { name: 'United States' }).click();
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
-    console.log('SearchVolumeService - before click on France');
 
+
+    await waitRandom();
     await page
       .locator('div:nth-child(65) > .css-66iqcm-menuItemButton')
       .click();
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
-    console.log(
-      'SearchVolumeService - after click on france, before click on Trouver des mots clés'
-    );
 
+    await waitRandom();
     await page.getByRole('button', { name: 'Trouver des mots-clés' }).click();
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
-    console.log(
-      'SearchVolumeService - after click on trouver des mots-clés, before looking for frame "Vous êtes humain"'
-    );
 
+    console.log(
+      `[keyword=${keyword}] - after click on 'trouver des mots-clés'`);
+
+    await waitRandom();
     const label = await page
       .frameLocator(
         'iframe[title="Widget containing a Cloudflare security challenge"]'
       )
       .getByLabel('Vérifiez que vous êtes humain');
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
+
     console.log(
-      'SearchVolumeService - after looking for frame vous etes humain, before click on "Vous êtes humain"'
+      `[keyword=${keyword}] - after looking for frame vous etes humain`
     );
 
-    const ahrefskwLocator = await page.locator('.ReactModalPortal table tbody tr:nth-child(1) td p');
-    const textKwLocator = ahrefskwLocator.textContent();
-    console.log(textKwLocator);
+    await waitRandom();
+    const ahrefskwLocator = await page.locator('.ReactModalPortal table tbody tr td:nth-child(1) p');
+    const textKwLocator = await ahrefskwLocator.allTextContents();
 
-    await label.check();
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
-    );
+    const ahrefsSearchVolumeLocator = await page.locator('.ReactModalPortal table tbody tr td:nth-child(2) p');
+    const searchVolumeLocator = await ahrefsSearchVolumeLocator.allTextContents();
 
-    console.log('après check vérifier que vous êtes humain');
+    const volumeSearchPerKeyword: Map<string, string> = new Map<string, string>();
+    textKwLocator.forEach((kw, index) => {
+      const volume = searchVolumeLocator[index];
+      volumeSearchPerKeyword.set(kw, volume);
+    })
 
-    /* 
-    ESSAYER un peu plus GoLogin mais c'est pas très clair !!!
-    
-    aller voir:
-    peut-être passer tout ce code à un fichier de test de Playwright pour voir si on peut debugger un peu plus - et voir ce que Playwright voit, non ????
-    et sinon voir le lien de Medium et GoLogin 
-    
-    https://www.scrapingbee.com/
-    https://brightdata.com/
-    https://medium.com/geekculture/how-i-bypassed-cloudflare-bot-protection-for-web-scraping-b7c367b4cb1f
-    https://www.zenrows.com/blog/playwright-cloudflare-bypass#set-custom-user-agent
-    https://www.zenrows.com/blog/playwright-cloudflare-bypass#go-around-playwright-limitations
-    https://www.zenrows.com/
-    
-    npx playwright codegen https://ahrefs.com/fr/amazon-keyword-tool
-    */
+    console.log(`[keyword=${keyword}] - results`, volumeSearchPerKeyword)
 
-    return -1;
+
+    await page.close();
+    await context.close();
+    await browser.close();
+
+    console.log(`[keyword=${keyword}] - findAhrefsSearchVolume - DONE`);
+
+
+    return volumeSearchPerKeyword;
   }
+}
+
+const waitRandom = async () => {
+  await new Promise((resolve) =>
+    setTimeout(resolve, Math.floor(Math.random() * 2000 + 1000))
+  );
 }

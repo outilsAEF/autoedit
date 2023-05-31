@@ -15,6 +15,9 @@ export class TimeLoggerMiddleware implements NestMiddleware {
     } else if (req.baseUrl === '/api/keywords') {
       paramKey = 'keyword';
       paramLog = 'keyword';
+    } else if (req.baseUrl === '/api/search-volume') {
+      paramKey = 'keyword';
+      paramLog = 'keyword';
     } else {
       console.log(`no logs: req.baseUrl=${req.baseUrl}`);
       return next();
