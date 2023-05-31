@@ -17,8 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "heroku-cleanup": "yarn run playwright install-deps"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -35,7 +34,7 @@
     "express-handlebars": "^7.0.7",
     "gologin": "^2.0.10",
     "hbs": "^4.2.0",
-    "playwright-firefox": "^1.34.3",
+    "playwright": "^1.34.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "ssl-express-www": "^3.2.1"

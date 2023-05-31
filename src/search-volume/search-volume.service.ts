@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { firefox } from 'playwright-firefox';
+import { firefox } from 'playwright';
 
 @Injectable()
 export class SearchVolumeService {
