@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { SearchVolumeService } from './search-volume.service';
 
 @Controller('api/search-volume')
