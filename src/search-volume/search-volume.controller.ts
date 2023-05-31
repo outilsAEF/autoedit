@@ -5,8 +5,8 @@ import { SearchVolumeService } from './search-volume.service';
 export class SearchVolumeController {
   constructor(private readonly searchVolumeService: SearchVolumeService) { }
   @Get()
-  async findByKeyword(@Query('keyword') keyword: string) {
-    console.log(`[keyword-${keyword}] searchVolume`);
+  async findAhrefsSearchVolumeByKeyword(@Query('keyword') keyword: string) {
+    console.log(`[keyword-${keyword}] findAhrefsSearchVolumeByKeyword`);
     const ahrefsSearchVolume = await this.searchVolumeService.findAhrefsSearchVolume(keyword);
     return JSON.stringify(Object.fromEntries(ahrefsSearchVolume));
   }
