@@ -14,7 +14,7 @@ const fetchKeywords = () => {
 
   try {
     keywords.forEach(async keyword => {
-      const keywordRow = keywordsTable.querySelector(`tr.keyword-row[data-keyword='${keyword}']`);
+      const keywordRow = keywordsTable.querySelector(`tr.keyword-row[data-keyword="${keyword}"]`);
 
 
       const res = await axios({
