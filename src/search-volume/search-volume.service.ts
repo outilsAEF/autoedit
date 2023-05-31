@@ -53,6 +53,8 @@ export class SearchVolumeService {
       `[keyword=${keyword}] - after looking for frame vous etes humain`
     );
 
+    await page.screenshot({ path: 'screenshot.png' })
+
     await waitRandom();
     const ahrefskwLocator = await page.locator('.ReactModalPortal table tbody tr td:nth-child(1) p');
     const textKwLocator = await ahrefskwLocator.allTextContents();
