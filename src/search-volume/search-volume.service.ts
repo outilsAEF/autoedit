@@ -3,9 +3,7 @@ import { firefox } from 'playwright';
 
 @Injectable()
 export class SearchVolumeService {
-  async findAhrefsSearchVolume(keyword: string):
-    Promise<Buffer> {
-    // Promise<Map<string, string>> {
+  async findAhrefsSearchVolume(keyword: string): Promise<Map<string, string>> {
     console.log(`[keyword=${keyword}] - findAhrefsSearchVolume - START`);
 
     const browser = await firefox.launch({
@@ -55,9 +53,7 @@ export class SearchVolumeService {
       `[keyword=${keyword}] - after looking for frame vous etes humain`
     );
 
-    // await page.screenshot({ path: 'screenshot.png' })
-    const image = await page.screenshot({ type: 'png' });
-
+    await page.screenshot({ path: 'screenshot.png' })
 
     await waitRandom();
     const ahrefskwLocator = await page.locator('.ReactModalPortal table tbody tr td:nth-child(1) p');
@@ -82,8 +78,7 @@ export class SearchVolumeService {
     console.log(`[keyword=${keyword}] - findAhrefsSearchVolume - DONE`);
 
 
-    // return volumeSearchPerKeyword;
-    return image;
+    return volumeSearchPerKeyword;
   }
 }
 
