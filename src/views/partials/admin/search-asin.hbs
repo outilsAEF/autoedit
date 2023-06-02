@@ -6,11 +6,11 @@
       {{!-- '{{adminParam}}' --}}
       <div class="input-group gap-2">        
         <input
-          id='asin'
-          name='asin'
+          id='asins'
+          name='asins'
           type='search'
-          class='form-control'
-          placeholder='[ADMIN] Saisir un ASIN ...'
+          class='form-control input-asin'
+          placeholder='[ADMIN] Saisissez un ou plusieurs ASIN séparés par des virgules : B09ZYQRVQB, B0B14862MF ...'
           aria-label='Saisir un ASIN'
           aria-describedby="basic-addon1"
           required 
@@ -29,6 +29,12 @@
   {{#if error}}
     <div class="alert alert-danger d-flex justify-content-center p-1 fs-6 mb-5">    
       {{error.message}}
+    </div>
+  {{/if}}
+
+  {{#if asinsWithErrors}}
+    <div class="alert alert-warning d-flex justify-content-center p-1 fs-6 mb-5">    
+      ASIN(s) inconnus(s) : {{asinsWithErrors}}
     </div>
   {{/if}}
   

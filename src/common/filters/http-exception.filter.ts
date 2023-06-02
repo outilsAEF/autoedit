@@ -1,5 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Catch(HttpException)
 export class HttpExceptionFilter<T extends HttpException> implements ExceptionFilter {
@@ -10,11 +10,28 @@ export class HttpExceptionFilter<T extends HttpException> implements ExceptionFi
 
     if (exception.getStatus() === HttpStatus.NOT_FOUND) return res.status(HttpStatus.NOT_FOUND).json({ statusCode: HttpStatus.NOT_FOUND });
 
+    const req = ctx.getRequest<Request>();
+
     console.error(exception);
-    res.render('index', {
-      title: `Erreur interne`,
+
+    let message = `Erreur interne pendant la requête. Veuillez vérifier les logs`;
+    let title = `Erreur interne`;
+
+    const exceptionResponse = exception.getResponse();
+    if (typeof exceptionResponse === 'object') {
+      console.log({ exceptionResponse });
+      message = (exceptionResponse as any).message.join(', ');
+      title = 'Erreur de validation';
+
+    }
+
+    const templateName = (req.path.includes('admin')) ? 'admin' : 'index';
+
+
+    res.render(templateName, {
+      title,
       error: {
-        message: `Erreur interne pendant la requête. Veuillez vérifier les logs`
+        message: `Erreur lors de la validaiton: ${message}`,
       }
     })
   }

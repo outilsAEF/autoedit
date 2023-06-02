@@ -6,15 +6,22 @@ import { ConfigService } from '@nestjs/config';
 
 
 const CATEGORY_NODE_NAME_TO_NOT_DISPLAY = ['Catégories', 'Boutique Kindle', 'Thèmes'];
-const CATEGORY_TREE_TO_NOT_SHOW_CONTAINS = 'Self Service';
+
 
 
 @Injectable()
 export class AmazonPaapiService {
   constructor(private readonly configService: ConfigService) { }
 
-  async findCategoriesByAsin(asin: string): Promise<Category[]> {
+  async findCategoriesByAsinsWithSalesRank(asins: string[]): Promise<{ categories: Category[], asinsWithErrors?: string[] }> {
+    return this.findCategoriesByAsins(asins, true);
+  }
+  async findCategoriesByAsinsWithoutSalesRank(asins: string[]): Promise<{ categories: Category[], asinsWithErrors?: string[] }> {
+    return this.findCategoriesByAsins(asins, false);
+  }
 
+  private async findCategoriesByAsins(asins: string[], withSalesRank: boolean): Promise<{ categories: Category[], asinsWithErrors?: string[] }> {
+    console.log({ asins })
     const partnerTag = this.configService.get<string>('PAAPI_PARTNER_TAG');
     const commonParameters = {
       AccessKey: this.configService.get<string>('PAAPI_ACCESS_KEY'),
@@ -24,19 +31,25 @@ export class AmazonPaapiService {
       Marketplace: this.configService.get<string>('PAAPI_MARKETPLACE'),
     };
 
+    const apiResources = ['BrowseNodeInfo.BrowseNodes',
+      'BrowseNodeInfo.BrowseNodes.Ancestor'];
+    if (withSalesRank) apiResources.push('BrowseNodeInfo.BrowseNodes.SalesRank');
+
     const requestParameters = {
-      ItemIds: [asin],
+      ItemIds: asins,
       IdemIdType: 'ASIN',
-      Resources: [
-        'BrowseNodeInfo.BrowseNodes',
-        'BrowseNodeInfo.BrowseNodes.Ancestor',
-        'BrowseNodeInfo.BrowseNodes.SalesRank',
-      ],
+      Resources: apiResources
     };
 
+
     let books;
+    let asinsWithErrors: string[] | undefined;
     try {
       books = await amazonPaapi.GetItems(commonParameters, requestParameters);
+      const errorNodes = books.Errors;
+      if (errorNodes && errorNodes.length > 0) {
+        asinsWithErrors = errorNodes.map(extractAsinFromError);
+      }
     } catch (error) {
       if (!error.response) throw new InternalServerErrorException('Could not connect to third party API');
 
@@ -44,29 +57,38 @@ export class AmazonPaapiService {
         'Error while getting results from Amazon:',
         error.response.body.Errors
       );
-      if (error.response.body.Errors[0].Code === 'InvalidParameterValue')
-        throw new InvalidASINException(error.response.body.Errors[0].Message, asin);
+      const errorNodes = error.response.body.Errors;
+      if (errorNodes && errorNodes.length > 0) {
+        asinsWithErrors = errorNodes.map(extractAsinFromError);
+      }
+      // if (error.response.body.Errors[0].Code === 'InvalidParameterValue')
+      //   throw new InvalidASINException(error.response.body.Errors[0].Message, asins[0]);
     }
 
-    if (!books.ItemsResult) { throw new InvalidASINException('', asin) }
+    if (!books.ItemsResult) { throw new InvalidASINException('', asins[0]) }
 
-    const bookFromPAAPI = books.ItemsResult.Items[0];
+    const booksFromPAAPI = books.ItemsResult.Items;
 
-    const categoriesNotFiltered: Category[] =
-      bookFromPAAPI.BrowseNodeInfo.BrowseNodes
-        .sort(sortCategories)
-        .map((node) => getCategories(node, partnerTag));
+    const categoryNodes = booksFromPAAPI.map(book => book.BrowseNodeInfo.BrowseNodes).flat();
 
-    const categories = filterCategories(categoriesNotFiltered);
+    const categories: Category[] =
+      categoryNodes.map((node) => getCategories(node, partnerTag));
 
-    return categories
+    return { categories, asinsWithErrors };
 
   }
 }
 
-const sortCategories = (nodeA, nodeB) => {
-  return +nodeB.SalesRank || 0 - +nodeA.SalesRank || 0;
+const ASIN_POSITION_IN_ERROR_MESSAGE_FROM_AMAZON_PAAPI = 3
+const extractAsinFromError = (errorNode): string => {
+  const msg = errorNode.Message;
+  console.log('extractAsinFromError', msg);
+  const asin = msg.split(' ')[ASIN_POSITION_IN_ERROR_MESSAGE_FROM_AMAZON_PAAPI - 1];
+  console.log('extractAsinFromError', asin);
+  return asin;
 }
+
+
 
 const getCategories = (node, partnerTag): Category =>
 ({
@@ -99,9 +121,4 @@ const getFullCategory = (node): string => {
 const categoryIsRoot = (node) => !node.Ancestor;
 const displayNameCanBeIncluded = (node) => !CATEGORY_NODE_NAME_TO_NOT_DISPLAY.includes(node.DisplayName)
 
-const filterCategories = (categories: Category[]): Category[] => {
-  return categories.filter(
-    (category) =>
-      !category.categoryTree.includes(CATEGORY_TREE_TO_NOT_SHOW_CONTAINS)
-  );
-};
+
