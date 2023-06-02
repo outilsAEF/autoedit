@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { InvalidASINException } from 'src/books/books.exceptions';
 
@@ -11,12 +11,10 @@ export class InvalidAsinExceptionFilter<T extends InvalidASINException> implemen
 
     const asin = exception.asin;
 
-    console.error(exception);
 
     const templateName = (req.path.includes('admin')) ? 'admin' : 'index';
 
-    // console.log({ templateName })
-    res.render(templateName, {
+    res.status(HttpStatus.BAD_REQUEST).render(templateName, {
       title: `Erreur pour l'ASIN ${asin}`,
       error: {
         message: `L'ASIN ${asin} n'existe pas. Veuillez vérifier l'ASIN et essayez à nouveau.`
