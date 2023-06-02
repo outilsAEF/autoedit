@@ -16,14 +16,17 @@ export class BooksService {
 
   async findByAsin(asin: string): Promise<Book> {
     console.log(`[asin=${asin}] - booksService.findByAsin`);
-    const { categories, asinsWithErrors } = await this.amazonPaapiService.findCategoriesByAsinsWithSalesRank([asin]);
+    const { categories: unfilteredCategories, asinsWithErrors } = await this.amazonPaapiService.findCategoriesByAsinsWithSalesRank([asin]);
     if (asinsWithErrors) {
       throw new InvalidASINException('Invalid ASIN(s)', asin);
     }
+    const filteredAndSortedCategories = removeUnwantedCategories(unfilteredCategories).sort(sortCategories);
+
+    const noDuplicateCategories = removeDuplicatedCategories(filteredAndSortedCategories);
 
     const bookFromRainforestAPI = await this.rainforestApiService.findBookByAsin(asin);
 
-    return { categories, ...bookFromRainforestAPI };
+    return { categories: noDuplicateCategories, ...bookFromRainforestAPI };
 
   }
 
