@@ -64,10 +64,12 @@ export class AmazonPaapiService {
       //   throw new InvalidASINException(error.response.body.Errors[0].Message, asins[0]);
     }
 
+
     if (!books.ItemsResult) { return { categories: [], asinsWithErrors } }
 
     const booksFromPAAPI =
       books.ItemsResult.Items
+
 
     const categoryNodes = booksFromPAAPI.map(book => book.BrowseNodeInfo.BrowseNodes).flat();
 

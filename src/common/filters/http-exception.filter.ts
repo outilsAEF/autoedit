@@ -8,6 +8,10 @@ export class HttpExceptionFilter<T extends HttpException> implements ExceptionFi
 
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
+
+
+    if (exception.getStatus() === HttpStatus.NOT_FOUND) return res.status(HttpStatus.NOT_FOUND).json({ statusCode: HttpStatus.NOT_FOUND });
+
     const req = ctx.getRequest<Request>();
 
     if (exception.getStatus() === HttpStatus.NOT_FOUND) return res.status(HttpStatus.NOT_FOUND).json({ statusCode: HttpStatus.NOT_FOUND });

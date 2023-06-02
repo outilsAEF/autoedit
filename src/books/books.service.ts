@@ -46,13 +46,15 @@ export class BooksService {
       asinsWithErrors = otherAsinsResult.asinsWithErrors;
     }
 
-    const categories = removeUnwantedCategories(unfilteredCategories).sort(sortCategories);
+    const filteredAndSortedCategories = removeUnwantedCategories(unfilteredCategories).sort(sortCategories);
+
+    const noDuplicateCategories = removeDuplicatedCategories(filteredAndSortedCategories);
 
     const bookFromRainforestAPI = await this.rainforestApiService.findBookByAsin(firstAsin);
 
     return {
       book: {
-        categories,
+        categories: noDuplicateCategories,
         ...bookFromRainforestAPI
       },
       asinsWithErrors
@@ -78,5 +80,12 @@ const removeUnwantedCategories = (categories: Category[]): Category[] => {
       !category.categoryTree.includes(CATEGORY_TREE_TO_NOT_SHOW_CONTAINS)
   );
 };
+
+const removeDuplicatedCategories = (categories: Category[]): Category[] => {
+  return categories.filter(
+    (category, index, categoriesArray) => categoriesArray.findIndex(someCat => (someCat.id === category.id)) === index)
+}
+
+
 
 

@@ -223,10 +223,10 @@ const getGlobalRank = (book): GlobalRank | null => {
 const convertBookFromRainforestApiToBook = (book): BookWithoutCategories => {
   return {
     asin: book.asin,
-    authors: book.authors.map(
+    authors: book.authors?.map(
       ({ name, link }): Author => ({ name, url: link })
     ),
-    coverUrl: book.main_image.link,
+    coverUrl: book.main_image?.link,
     title: book.title,
     url: book.link,
     globalRank: getGlobalRank(book),
