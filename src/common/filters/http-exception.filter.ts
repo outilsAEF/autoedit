@@ -4,6 +4,8 @@ import { Request, Response } from 'express';
 @Catch(HttpException)
 export class HttpExceptionFilter<T extends HttpException> implements ExceptionFilter {
   catch(exception: T, host: ArgumentsHost) {
+
+
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
 
@@ -11,6 +13,8 @@ export class HttpExceptionFilter<T extends HttpException> implements ExceptionFi
     if (exception.getStatus() === HttpStatus.NOT_FOUND) return res.status(HttpStatus.NOT_FOUND).json({ statusCode: HttpStatus.NOT_FOUND });
 
     const req = ctx.getRequest<Request>();
+
+    if (exception.getStatus() === HttpStatus.NOT_FOUND) return res.status(HttpStatus.NOT_FOUND).json({ statusCode: HttpStatus.NOT_FOUND });
 
     console.error(exception);
 
@@ -20,7 +24,7 @@ export class HttpExceptionFilter<T extends HttpException> implements ExceptionFi
     const exceptionResponse = exception.getResponse();
     if (typeof exceptionResponse === 'object') {
       console.log({ exceptionResponse });
-      message = (exceptionResponse as any).message.join(', ');
+      message = `Erreur lors de la validation: ${(exceptionResponse as any).message.join(', ')}`;
       title = 'Erreur de validation';
 
     }
@@ -31,7 +35,7 @@ export class HttpExceptionFilter<T extends HttpException> implements ExceptionFi
     res.render(templateName, {
       title,
       error: {
-        message: `Erreur lors de la validaiton: ${message}`,
+        message,
       }
     })
   }

@@ -1,10 +1,8 @@
-
 <div class="container">
   <div class="d-flex justify-content-center py-5 width-90">
-    <form class='search-asin-form w-75' role='search' method='get' action='/admin-books'>
-    {{!-- <form class='search-asin-form w-75' role='search' method='get' action='/{{adminParam}}'> --}}
-      {{!-- '{{adminParam}}' --}}
-      <div class="input-group gap-2">        
+    <form class='search-asin-form w-75' role='search' method='get' action='/admin-books'>    
+       <label class="p-2" for="asins">Rechercher un ou plusieurs ASINs:</label>
+       <div class="input-group gap-2">        
         <input
           id='asins'
           name='asins'
@@ -12,7 +10,7 @@
           class='form-control input-asin'
           placeholder='[ADMIN] Saisissez un ou plusieurs ASIN séparés par des virgules : B09ZYQRVQB, B0B14862MF ...'
           aria-label='Saisir un ASIN'
-          aria-describedby="basic-addon1"
+          aria-describedby="asins"
           required 
         />
         <button class="search-asin-btn btn btn-primary" type="submit">

@@ -1,5 +1,4 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { InvalidASINException } from 'src/books/books.exceptions';
 import { Category } from 'src/books/entities/book.entity';
 import amazonPaapi from 'amazon-paapi';
 import { ConfigService } from '@nestjs/config';
@@ -65,9 +64,12 @@ export class AmazonPaapiService {
       //   throw new InvalidASINException(error.response.body.Errors[0].Message, asins[0]);
     }
 
-    if (!books.ItemsResult) { throw new InvalidASINException('', asins[0]) }
 
-    const booksFromPAAPI = books.ItemsResult.Items;
+    if (!books.ItemsResult) { return { categories: [], asinsWithErrors } }
+
+    const booksFromPAAPI =
+      books.ItemsResult.Items
+
 
     const categoryNodes = booksFromPAAPI.map(book => book.BrowseNodeInfo.BrowseNodes).flat();
 

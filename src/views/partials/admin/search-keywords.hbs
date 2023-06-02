@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="d-flex justify-content-center py-5 width-90">
+    <form class='search-keywords-form w-75' role='search' method='get' action='/admin-keywords'>   
+      <label class="p-2" for="keywords">Rechercher un ou plusieurs mots-clés:</label>
+      <div class="input-group gap-2">
+        <textarea
+          id='keywords'
+          name='keywords'
+          type='search'
+          class='form-control textarea-keywords'
+          cols="24"
+          rows="5"
+          placeholder='[ADMIN] Saisissez un mot-clé par ligne'
+          aria-label='Saisir un mot-clé par ligne'
+          aria-describedby="keywords"
+          required 
+        ></textarea>
+        <button class="search-keywords-btn btn btn-primary" type="submit">
+          <span class="search-keywords-btn-text">Chercher</span>
+          <span class="search-keywords-btn-text-loading d-none">En cours 
+            <span class="spinner-border spinner-border-sm" role="status"></span>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script defer src="assets/js/search-keywords.js"></script>

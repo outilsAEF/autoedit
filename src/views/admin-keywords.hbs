@@ -1,0 +1,30 @@
+<div class="admin">
+  {{> admin/breadcrumbs}}
+  {{> admin/search-keywords}}    
+  <div class="width-90 p-3">
+    <p class="me-1">Liste de mots-clés:</p>
+    
+    <table class="table-tops table table-hover table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Mot-clé</th>
+          <th scope="col">Nombre de résultats sur Amazon</th>
+          <th scope="col">Volume de recherche Ahrefs</th>          
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        {{#each keywords}}
+          <tr class="keyword-row" data-keyword="{{this}}">
+            <td>{{this}}</td>            
+            <td class="td-total-results-amazon text-center">&#9203;</td>
+            <td class="td-search-volume-ahrefs text-center">&#9203;</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <button class="btn-fetch-keywords">Mettre à jour les mots-clés</button>      
+  </div>
+  
+</div>
+<script defer src="assets/js/axios.min.js"></script>
+<script defer src="assets/js/admin-keywords.js"></script>
