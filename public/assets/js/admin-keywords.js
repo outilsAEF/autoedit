@@ -13,22 +13,8 @@ const fetchKeywords = () => {
   keywordRows.forEach(row => keywords.push(row.dataset.keyword));
 
   try {
-    keywords.forEach(async keyword => {
-      const keywordRow = keywordsTable.querySelector(`tr.keyword-row[data-keyword="${keyword}"]`);
-
-
-      const res = await axios({
-        method: 'GET',
-        url: `/api/keywords?keyword=${keyword}`,
-      });
-
-      if (res.status !== 200 || res.data === undefined) return;
-
-      const { totalResults } = res.data;
-      const amazonCell = keywordRow.querySelector(`.td-total-results-amazon`);
-      amazonCell.innerText = totalResults || 'n/a';
-
-    });
+    fetchTotalResultsAmazon(keywords);
+    fetchSearchVolumes(keywords);
 
   } catch (err) {
     if (err.response) {
@@ -39,10 +25,51 @@ const fetchKeywords = () => {
   }
 }
 
+
+
 fetchKeywordsBtn.addEventListener('click', async () => {
   fetchKeywords();
 });
 
 fetchKeywords();
 
+async function fetchSearchVolumes(keywords) {
+  const res = await axios({
+    method: 'GET',
+    url: `/api/keywords/search-volume?keywords=${keywords}`,
+  })
+
+  if (res.status !== 200 || res.data === undefined)
+    return;
+
+  const { searchVolumes } = res.data;
+
+  keywords.forEach((keyword) => {
+    const correspondingSearchVolume = searchVolumes.find(item => item.keyword === keyword).volume || 'n/a';
+
+    const keywordRow = keywordsTable.querySelector(`tr.keyword-row[data-keyword="${keyword}"]`)
+    const volumeCell = keywordRow.querySelector(`.td-search-volume`);
+    volumeCell.innerText = correspondingSearchVolume
+  })
+}
+
+function fetchTotalResultsAmazon(keywords) {
+  keywords.forEach(async (keyword) => {
+    const keywordRow = keywordsTable.querySelector(`tr.keyword-row[data-keyword="${keyword}"]`);
+
+
+    const res = await axios({
+      method: 'GET',
+      url: `/api/keywords/total-results?keyword=${keyword}`,
+    });
+
+    if (res.status !== 200 || res.data === undefined)
+      return;
+
+    const { totalResults } = res.data;
+    const amazonCell = keywordRow.querySelector(`.td-total-results-amazon`);
+    amazonCell.innerText = totalResults || 'n/a';
+
+  });
+}
 

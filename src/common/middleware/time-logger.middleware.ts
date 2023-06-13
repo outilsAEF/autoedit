@@ -5,14 +5,14 @@ import { NextFunction, Request } from 'express';
 export class TimeLoggerMiddleware implements NestMiddleware {
   use(req: Request, res: any, next: NextFunction) {
     let paramKey, paramLog = '';
-    if (['/', '/admin', '/admin-keywords'].includes(req.baseUrl)) return next(); // no logbaseUrl )
+    if (['/', '/admin', '/admin-keywords', '/api/keywords/search-volume'].includes(req.baseUrl)) return next(); // no logbaseUrl )
     if (req.baseUrl === '/admin-books' || req.baseUrl === '/book') {
       paramKey = 'asin';
       paramLog = 'asin'
     } else if (req.baseUrl === '/api/categories') {
       paramKey = 'id'
       paramLog = 'category';
-    } else if (req.baseUrl === '/api/keywords') {
+    } else if (req.baseUrl === '/api/keywords/total-results') {
       paramKey = 'keyword';
       paramLog = 'keyword';
     } else {
