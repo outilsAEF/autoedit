@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SearchVolumeService } from './search-volume.service';
+import { DataforseoApiService } from './dataforseo-api.service';
 
-describe('SearchVolumeService', () => {
-  let service: SearchVolumeService;
+describe('DataforseoApiService', () => {
+  let service: DataforseoApiService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SearchVolumeService],
+      providers: [DataforseoApiService],
     }).compile();
 
-    service = module.get<SearchVolumeService>(SearchVolumeService);
+    service = module.get<DataforseoApiService>(DataforseoApiService);
   });
 
   it('should be defined', () => {
