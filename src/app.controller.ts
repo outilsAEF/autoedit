@@ -11,6 +11,10 @@ export class AppController {
   @Get()
   getIndex(@Res() res: Response) {
     console.log('AutoEdit - homepage');
-    return res.render('books', { title: 'AutoEdit - Cherchez un ASIN' });
+    return res.render('books', {
+      title: 'Outil SEO Auteur : Catégories KDP et meta-data associées à votre ASIN ou ISBN10',
+      metaDescription: 'Optimisez le référencement SEO de votre livre avec notre outil SEO KDP. Entrez un ASIN ou ISBN10 et découvrez les catégories KDP et meta-data associées 👉',
+      isPublic: true
+    });
   }
 }
