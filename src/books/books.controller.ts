@@ -17,8 +17,10 @@ export class BooksController {
     const book = await this.booksService.findByAsin(asin);
 
     return {
-      title: `Auto Edit - Informations sur l'ASIN ${asin}`,
-      book,
+      title: 'Outil SEO Auteur : Catégories KDP et meta-data associées à votre ASIN ou ISBN10',
+      metaDescription: 'Optimisez le référencement SEO de votre livre avec notre outil SEO KDP. Entrez un ASIN ou ISBN10 et découvrez les catégories KDP et meta-data associées 👉',
+      isPublic: true,
+      book
     };
 
   }
